@@ -1,0 +1,94 @@
+{
+  "name": "file-view-toggle",
+  "displayName": "file-view-toggle",
+  "description": "Allows user to select files and directories to toggle off and on in the explorer view",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.118.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:file-view-toggle",
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Hide Files",
+      "properties": {
+        "file-visibility.files": {
+          "type": "array",
+          "default": false,
+          "description": "List of files to hide."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "file-view-toggle",
+          "name": "Hidden files"
+        }
+      ]
+    },
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "file-visibility.hide",
+          "group": "z_commands@1"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "file-visibility.refresh",
+          "when": "view == file-view-toggle",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "file-visibility.hide",
+        "title": "Hide"
+      },
+      {
+        "command": "file-visibility.show",
+        "title": "Show"
+      },
+      {
+        "command": "file-visibility.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.118.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "ts-loader": "^9.5.4",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
