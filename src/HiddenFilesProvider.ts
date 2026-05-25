@@ -6,7 +6,7 @@ import {
   Command,
   TreeItemCollapsibleState,
 } from "vscode";
-import { getExludedFiles } from "./config";
+import { getFileVisibilityExcludedFiles } from "./config";
 
 export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
   constructor() {}
@@ -16,7 +16,7 @@ export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
   }
 
   getChildren(element?: TreeItem) {
-    const files = getExludedFiles();
+    const files = getFileVisibilityExcludedFiles();
 
     return files.map((file) => {
       const item = new File(file, {

@@ -10,7 +10,7 @@ import * as fs from "fs";
 import { HiddenFilesProvider } from "./HiddenFilesProvider";
 import { refresh, registerCommands } from "./commands";
 import {
-  getExludedFiles,
+  getFileVisibilityExcludedFiles,
   saveDefaultExclude,
   saveExcludeFiles,
 } from "./config";
@@ -40,7 +40,7 @@ export const isDirectory = (path: string) => {
 export const resetSettings = (fullReset = true) => {
   saveDefaultExclude(fullReset);
 
-  const excludedFiles = getExludedFiles();
+  const excludedFiles = getFileVisibilityExcludedFiles();
   if (excludedFiles.length === 0) {
     saveExcludeFiles([]);
   } else {

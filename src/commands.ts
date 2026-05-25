@@ -1,5 +1,5 @@
 import { ExtensionContext, commands } from "vscode";
-import { excludeFiles, includeFile } from "./config";
+import { excludeFiles, removeFileFromExcludeList } from "./config";
 import { $log, hiddenFilesProvider } from "./utils";
 
 interface VsCodeFile {
@@ -17,7 +17,7 @@ export const hide = (...args: [VsCodeFile, Array<VsCodeFile>]): void => {
 };
 
 export const show = (fileRelativePath: string): void => {
-  includeFile(fileRelativePath);
+  removeFileFromExcludeList(fileRelativePath);
   refresh();
 };
 
