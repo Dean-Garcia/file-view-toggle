@@ -19,8 +19,8 @@
       "title": "Hide Files",
       "properties": {
         "file-visibility.files": {
-          "type": "array",
-          "default": false,
+          "type": "object",
+          "default": {},
           "description": "List of files to hide."
         }
       }

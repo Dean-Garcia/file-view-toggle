@@ -41,8 +41,8 @@ export const resetSettings = (fullReset = true) => {
   saveDefaultExclude(fullReset);
 
   const excludedFiles = getFileVisibilityExcludedFiles();
-  if (excludedFiles.length === 0) {
-    saveExcludeFiles([]);
+  if (Object.keys(excludedFiles).length === 0) {
+    saveExcludeFiles({});
   } else {
     $log(`Excluded files => ${JSON.stringify(excludedFiles, null, 2)}`);
   }

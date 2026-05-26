@@ -7,6 +7,7 @@ import {
   TreeItemCollapsibleState,
 } from "vscode";
 import { getFileVisibilityExcludedFiles } from "./config";
+import { FileVisibilityActions } from "./constants";
 
 export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
   constructor() {}
@@ -17,16 +18,17 @@ export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
 
   getChildren(element?: TreeItem) {
     const files = getFileVisibilityExcludedFiles();
-
-    return files.map((file) => {
-      const item = new File(file, {
-        command: "file-visibility.show",
+    console.log("hiddenfilesprovider.getchildren", files);
+    let treeItemChildren: Array<File> = [];
+    for (const [path, isHidden] of Object.entries(files)) {
+      const item = new File(path, {
+        command: FileVisibilityActions.SHOW,
         title: "Show",
-        arguments: [file],
+        arguments: [path],
       });
-
-      return item;
-    });
+      treeItemChildren.push(item);
+    }
+    return treeItemChildren;
   }
 
   private _onDidChangeTreeData: EventEmitter<

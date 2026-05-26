@@ -1,6 +1,7 @@
 import { ExtensionContext, commands } from "vscode";
-import { excludeFiles, removeFileFromExcludeList } from "./config";
+import { addFilesToExcluded, removeFileFromExcludeList } from "./config";
 import { $log, hiddenFilesProvider } from "./utils";
+import { FileVisibilityActions } from "./constants";
 
 interface VsCodeFile {
   path: string;
@@ -8,11 +9,19 @@ interface VsCodeFile {
 
 export const hide = (...args: [VsCodeFile, Array<VsCodeFile>]): void => {
   const [, files] = args;
+
   const filesToExclude = files
     .filter((file) => typeof file.path === "string")
     .map((file) => file.path);
+  addFilesToExcluded(filesToExclude);
 
-  excludeFiles(filesToExclude);
+  // intake file
+  // parse file string
+  // format obj to be {filePath: isHidden}
+  // add to existing files.exclude
+  // update files.exclude
+  // refresh view
+
   refresh();
 };
 
@@ -35,9 +44,9 @@ export const refresh = (): void => {
 
 export const registerCommands = (context: ExtensionContext) => {
   const hideFilesCommands: Array<[string, (...args: any[]) => any]> = [
-    ["file-visibility.hide", hide],
-    ["file-visibility.show", show],
-    ["file-visibility.refresh", refresh],
+    [FileVisibilityActions.HIDE, hide],
+    [FileVisibilityActions.SHOW, show],
+    [FileVisibilityActions.REFRESH, refresh],
   ];
 
   for (const [command, handler] of hideFilesCommands) {

@@ -1,6 +1,9 @@
 import { WorkspaceConfiguration, workspace } from "vscode";
 import { refresh } from "./commands";
 import { rootFolder } from "./utils";
+import { ExcludedFiles } from "./types";
+import { FILE_VISIBILITY } from "./constants";
+import * as vscode from "vscode";
 
 const defaultExclude: Record<string, boolean> = {};
 
@@ -31,7 +34,7 @@ export const saveDefaultExclude = (calculateDefaultExclude = true) => {
 
     // If file-visibility.files includes filePath from files.excluded, then add to defaultExclude
     for (const filePath in exclude) {
-      if (excluded.includes(filePath) === false) {
+      if (!Object.hasOwn(excluded, filePath)) {
         defaultExclude[filePath] = true;
       }
     }
@@ -49,37 +52,34 @@ export const saveDefaultExclude = (calculateDefaultExclude = true) => {
  * @returns file-visibility config object in settings.json
  */
 export const getFileVisibilityConfig = (): WorkspaceConfiguration => {
-  return workspace.getConfiguration("file-visibility");
+  return workspace.getConfiguration(FILE_VISIBILITY);
 };
 
 /**
  *
  */
-export const updateFilesView = async () => {
+export const updateFilesView = (files: ExcludedFiles) => {
   // wait to make sure the files are updated
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  // await new Promise((resolve) => setTimeout(resolve, 200));
 
-  // Get excluded files from file-visibility.excluded
-  const files = getFileVisibilityExcludedFiles();
+  // // Get excluded files from file-visibility.excluded
+  // const files = getFileVisibilityExcludedFiles();
 
   // Create new object and add defaultExclude
-  const exclude = { ...defaultExclude };
-
-  // Add file:boolean to exclude object
-  if (files.length > 0) {
-    for (const file of files) {
-      exclude[file] = true;
-    }
-  }
-
-  // Update files.exclude with new object
-  workspaceFilesConfiguration().update("exclude", exclude);
+  const newExcludedFiles = { ...defaultExclude, ...files };
+  console.log("updatefilesview", files);
+  workspaceFilesConfiguration().update("exclude", newExcludedFiles);
 };
 
 // Update files-visilibity with files
-export const saveExcludeFiles = (files: Array<string>) => {
-  getFileVisibilityConfig().update("files", files);
-  updateFilesView();
+export const saveExcludeFiles = (files: ExcludedFiles) => {
+  console.log("saveExcludeFiles", files);
+  getFileVisibilityConfig().update(
+    "files",
+    files,
+    // vscode.ConfigurationTarget.Workspace,
+  );
+  updateFilesView(files);
 };
 
 // Removes file from files-visibility.files list
@@ -88,19 +88,22 @@ export const removeFileFromExcludeList = (relativePath: string) => {
   const files = getFileVisibilityExcludedFiles();
 
   // checks to see if it already exists
-  const toIncludeIndex = files.findIndex((file) => file === relativePath);
-  if (toIncludeIndex !== -1) {
-    files.splice(toIncludeIndex, 1);
-  }
+  // const toIncludeIndex = files.findIndex((file) => file === relativePath);
+  // if (toIncludeIndex !== -1) {
+  //   files.splice(toIncludeIndex, 1);
+  // }
+
+  delete files[relativePath];
+
   saveExcludeFiles(files);
 };
 
 // Add files to exclude list
-export const excludeFiles = (paths: Array<string>) => {
+export const addFilesToExcluded = (paths: Array<string>) => {
   // get existing
   const files = getFileVisibilityExcludedFiles();
 
-  console.log("paths", paths);
+  // files = {'index.ts': true, 'package.json': true}
 
   // remove rootFolder string from path
   for (const path of paths) {
@@ -110,8 +113,8 @@ export const excludeFiles = (paths: Array<string>) => {
         .replace(rootFolder, "");
       console.log("cleanFileOrDirPath", cleanFileOrDirPath);
 
-      if (files.includes(cleanFileOrDirPath) === false) {
-        files.push(cleanFileOrDirPath);
+      if (!Object.hasOwn(files, path)) {
+        files[cleanFileOrDirPath] = true;
       }
     }
   }
@@ -119,11 +122,10 @@ export const excludeFiles = (paths: Array<string>) => {
 };
 
 // Get files from file-visibility.files
-export const getFileVisibilityExcludedFiles = (): Array<string> => {
-  let files = getFileVisibilityConfig().get("files") as Array<string>;
-  if (!files) {
-    files = [];
-  }
-
+export const getFileVisibilityExcludedFiles = (): Record<string, boolean> => {
+  const files = getFileVisibilityConfig().get<Record<string, boolean>>(
+    "files",
+    {},
+  );
   return files;
 };
