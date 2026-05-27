@@ -40,10 +40,18 @@ export const saveDefaultExclude = (calculateDefaultExclude = true) => {
     }
 
     // Update files.exclude with files.exclude.... ????
-    workspaceFilesConfiguration().update("exclude", exclude);
+    workspaceFilesConfiguration().update(
+      "exclude",
+      exclude,
+      vscode.ConfigurationTarget.Workspace,
+    );
   } else {
     // Update files.exclude with defaultExclude
-    workspaceFilesConfiguration().update("exclude", defaultExclude);
+    workspaceFilesConfiguration().update(
+      "exclude",
+      defaultExclude,
+      vscode.ConfigurationTarget.Workspace,
+    );
   }
 };
 
@@ -68,7 +76,11 @@ export const updateFilesView = (files: ExcludedFiles) => {
   // Create new object and add defaultExclude
   const newExcludedFiles = { ...defaultExclude, ...files };
   console.log("updatefilesview", files);
-  workspaceFilesConfiguration().update("exclude", newExcludedFiles);
+  workspaceFilesConfiguration().update(
+    "exclude",
+    newExcludedFiles,
+    vscode.ConfigurationTarget.Workspace,
+  );
 };
 
 // Update files-visilibity with files
@@ -77,22 +89,15 @@ export const saveExcludeFiles = (files: ExcludedFiles) => {
   getFileVisibilityConfig().update(
     "files",
     files,
-    // vscode.ConfigurationTarget.Workspace,
+    vscode.ConfigurationTarget.Workspace,
   );
   updateFilesView(files);
 };
 
 // Removes file from files-visibility.files list
 export const removeFileFromExcludeList = (relativePath: string) => {
-  // Get files-visibility files
-  const files = getFileVisibilityExcludedFiles();
-
-  // checks to see if it already exists
-  // const toIncludeIndex = files.findIndex((file) => file === relativePath);
-  // if (toIncludeIndex !== -1) {
-  //   files.splice(toIncludeIndex, 1);
-  // }
-
+  // Get files-visibility files. Need to spread otherwise will error.
+  const files = { ...getFileVisibilityExcludedFiles() };
   delete files[relativePath];
 
   saveExcludeFiles(files);
@@ -101,7 +106,7 @@ export const removeFileFromExcludeList = (relativePath: string) => {
 // Add files to exclude list
 export const addFilesToExcluded = (paths: Array<string>) => {
   // get existing
-  const files = getFileVisibilityExcludedFiles();
+  const files = { ...getFileVisibilityExcludedFiles() };
 
   // files = {'index.ts': true, 'package.json': true}
 

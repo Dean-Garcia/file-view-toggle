@@ -15,13 +15,6 @@ export const hide = (...args: [VsCodeFile, Array<VsCodeFile>]): void => {
     .map((file) => file.path);
   addFilesToExcluded(filesToExclude);
 
-  // intake file
-  // parse file string
-  // format obj to be {filePath: isHidden}
-  // add to existing files.exclude
-  // update files.exclude
-  // refresh view
-
   refresh();
 };
 

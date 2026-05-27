@@ -18,7 +18,6 @@ export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
 
   getChildren(element?: TreeItem) {
     const files = getFileVisibilityExcludedFiles();
-    console.log("hiddenfilesprovider.getchildren", files);
     let treeItemChildren: Array<File> = [];
     for (const [path, isHidden] of Object.entries(files)) {
       const item = new File(path, {
