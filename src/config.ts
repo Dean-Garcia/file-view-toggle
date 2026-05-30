@@ -67,12 +67,6 @@ export const getFileVisibilityConfig = (): WorkspaceConfiguration => {
  *
  */
 export const updateFilesView = (files: ExcludedFiles) => {
-  // wait to make sure the files are updated
-  // await new Promise((resolve) => setTimeout(resolve, 200));
-
-  // // Get excluded files from file-visibility.excluded
-  // const files = getFileVisibilityExcludedFiles();
-
   // Create new object and add defaultExclude
   const newExcludedFiles = { ...defaultExclude, ...files };
   console.log("updatefilesview", files);

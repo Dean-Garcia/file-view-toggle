@@ -8,6 +8,7 @@ import {
 } from "vscode";
 import { getFileVisibilityExcludedFiles } from "./config";
 import { FileVisibilityActions } from "./constants";
+import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
 
 export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
   constructor() {}
@@ -18,13 +19,13 @@ export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
 
   getChildren(element?: TreeItem) {
     const files = getFileVisibilityExcludedFiles();
-    let treeItemChildren: Array<File> = [];
+    let treeItemChildren: Array<HiddenFileTreeItem> = [];
     for (const [path, isHidden] of Object.entries(files)) {
-      const item = new File(path, {
-        command: FileVisibilityActions.SHOW,
-        title: "Show",
-        arguments: [path],
-      });
+      const item = new HiddenFileTreeItem(
+        path,
+        isHidden,
+        TreeItemCollapsibleState.None,
+      );
       treeItemChildren.push(item);
     }
     return treeItemChildren;
@@ -41,13 +42,13 @@ export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
   }
 }
 
-class File extends TreeItem {
-  constructor(
-    public readonly label: string,
-    command: Command,
-  ) {
-    super(label, TreeItemCollapsibleState.None);
+// class File extends TreeItem {
+//   constructor(
+//     public readonly label: string,
+//     command: Command,
+//   ) {
+//     super(label, TreeItemCollapsibleState.None);
 
-    this.command = command;
-  }
-}
+//     this.command = command;
+//   }
+// }

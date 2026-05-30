@@ -14,7 +14,6 @@ import {
   saveDefaultExclude,
   saveExcludeFiles,
 } from "./config";
-import { join } from "path";
 
 export let hiddenFilesProvider: HiddenFilesProvider;
 let uConsole: OutputChannel;
@@ -75,4 +74,10 @@ export const init = (context: ExtensionContext) => {
       refresh();
     }, 1000);
   });
+};
+
+export const getFileExtension = (filePath: string) => {
+  return filePath.slice(
+    (Math.max(0, filePath.lastIndexOf(".")) || Infinity) + 1,
+  );
 };
