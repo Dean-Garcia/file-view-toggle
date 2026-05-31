@@ -87,10 +87,14 @@ export const saveExcludeFiles = async (files: ExcludedFiles) => {
 };
 
 // Removes file from files-visibility.files list
-export const removeFileFromExcludeList = async (item: HiddenFileTreeItem) => {
+export const removeFilesFromExcludeList = async (
+  items: HiddenFileTreeItem[],
+) => {
   // Get files-visibility files. Need to spread otherwise will error.
   const files = { ...getFileVisibilityExcludedFiles() };
-  delete files[item.label];
+  for (const item of items) {
+    delete files[item.label];
+  }
 
   await saveExcludeFiles(files);
 };
@@ -115,6 +119,19 @@ export const addFilesToExcluded = async (paths: Array<string>) => {
     }
   }
   await saveExcludeFiles(files);
+};
+
+export const toggleAllFilesVisibility = async (hideOrShow: "hide" | "show") => {
+  const files = { ...getFileVisibilityExcludedFiles() };
+  const toggledFiles: ExcludedFiles = {};
+
+  const wantToHide = hideOrShow === "hide";
+
+  Object.entries(files).forEach(([file, isHidden]) => {
+    toggledFiles[file] = wantToHide;
+  });
+
+  await saveExcludeFiles(toggledFiles);
 };
 
 // Get files from file-visibility.files

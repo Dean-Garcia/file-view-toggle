@@ -2,8 +2,11 @@
   "EXT_ID": "file-view-toggle",
   "VIEW_ID": "file-visibility",
   "HIDE": "hide",
-  "SHOW": "show",
+  "HIDE_ALL": "hide-all",
+  "REMOVE": "remove",
+  "SHOW_ALL": "show-all",
   "HIDE_FILE_EXTENSION": "hide-file-extension",
   "REFRESH": "refresh",
-  "TOGGLE_ROW_VISIBILITY": "toggle-row-visibility"
+  "TOGGLE_ROW_VISIBILITY": "toggle-row-visibility",
+  "TOGGLE_SELECTED": "hide-selected"
 }

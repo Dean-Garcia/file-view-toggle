@@ -55,14 +55,29 @@
       ],
       "view/title": [
         {
+          "command": "{{VIEW_ID}}.{{SHOW_ALL}}",
+          "when": "view == {{EXT_ID}}",
+          "group": "navigation@1"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{HIDE_ALL}}",
+          "when": "view == {{EXT_ID}}",
+          "group": "navigation@2"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_SELECTED}}",
+          "when": "view == {{EXT_ID}}",
+          "group": "navigation@3"
+        },
+        {
           "command": "{{VIEW_ID}}.{{REFRESH}}",
           "when": "view == {{EXT_ID}}",
-          "group": "navigation"
+          "group": "navigation@4"
         }
       ],
       "view/item/context": [
         {
-          "command": "{{VIEW_ID}}.{{SHOW}}",
+          "command": "{{VIEW_ID}}.{{REMOVE}}",
           "when": "view == {{EXT_ID}}",
           "group": "inline"
         }
@@ -78,21 +93,34 @@
         "title": "Hide File Extension"
       },
       {
-        "command": "{{VIEW_ID}}.{{REFRESH}}",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "{{VIEW_ID}}.{{SHOW}}",
-        "title": "Delete",
+        "command": "{{VIEW_ID}}.{{REMOVE}}",
+        "title": "Remove",
         "icon": "$(trash)"
       },
       {
         "command": "{{VIEW_ID}}.{{TOGGLE_ROW_VISIBILITY}}",
-        "title": "Toggle Row Visibility"
+        "title": "Toggle File Visibility",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_SELECTED}}",
+        "title": "Toggle Visibility of Active Selection",
+        "icon": "$(activate-breakpoints)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{HIDE_ALL}}",
+        "title": "Hide All Files from Explorer",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{SHOW_ALL}}",
+        "title": "Show All Files in Explorer",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{REFRESH}}",
+        "title": "Refresh View",
+        "icon": "$(refresh)"
       }
     ]
   },

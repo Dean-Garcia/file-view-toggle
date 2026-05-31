@@ -12,6 +12,7 @@ export function activate(context: ExtensionContext) {
   window.registerTreeDataProvider(config.EXT_ID, hiddenFilesProvider);
   window.createTreeView(config.EXT_ID, {
     treeDataProvider: hiddenFilesProvider,
+    canSelectMany: true,
   });
 }
 

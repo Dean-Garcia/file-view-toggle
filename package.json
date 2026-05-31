@@ -55,14 +55,29 @@
       ],
       "view/title": [
         {
+          "command": "file-visibility.show-all",
+          "when": "view == file-view-toggle",
+          "group": "navigation@1"
+        },
+        {
+          "command": "file-visibility.hide-all",
+          "when": "view == file-view-toggle",
+          "group": "navigation@2"
+        },
+        {
           "command": "file-visibility.refresh",
           "when": "view == file-view-toggle",
-          "group": "navigation"
+          "group": "navigation@3"
+        },
+        {
+          "command": "file-visibility.hide-selected",
+          "when": "view == file-view-toggle",
+          "group": "navigation@4"
         }
       ],
       "view/item/context": [
         {
-          "command": "file-visibility.show",
+          "command": "file-visibility.remove",
           "when": "view == file-view-toggle",
           "group": "inline"
         }
@@ -78,21 +93,34 @@
         "title": "Hide File Extension"
       },
       {
-        "command": "file-visibility.refresh",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "file-visibility.show",
-        "title": "Delete",
+        "command": "file-visibility.remove",
+        "title": "Remove",
         "icon": "$(trash)"
       },
       {
         "command": "file-visibility.toggle-row-visibility",
-        "title": "Toggle Row Visibility"
+        "title": "Toggle File Visibility",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "file-visibility.hide-selected",
+        "title": "Toggle Visibility of Selected",
+        "icon": "$(activate-breakpoints)"
+      },
+      {
+        "command": "file-visibility.hide-all",
+        "title": "Hide All Files from Explorer",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "file-visibility.show-all",
+        "title": "Show All Files in Explorer",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "file-visibility.refresh",
+        "title": "Refresh View",
+        "icon": "$(refresh)"
       }
     ]
   },

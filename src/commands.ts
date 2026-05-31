@@ -2,14 +2,13 @@ import { ExtensionContext, commands } from "vscode";
 import {
   addFilesToExcluded,
   getFileVisibilityExcludedFiles,
-  removeFileFromExcludeList,
+  removeFilesFromExcludeList,
   saveExcludeFiles,
+  toggleAllFilesVisibility,
 } from "./config";
 import { $log, getFileExtension, hiddenFilesProvider } from "./utils";
 import { FileVisibilityActions } from "./constants";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
-import * as vscode from "vscode";
-import { HiddenFilesProvider } from "./HiddenFilesProvider";
 
 interface VsCodeFile {
   path: string;
@@ -42,8 +41,21 @@ export const hideFileExtension = async (
   refresh();
 };
 
-export const show = async (item: HiddenFileTreeItem): Promise<void> => {
-  await removeFileFromExcludeList(item);
+export const removeFiles = async (
+  item: HiddenFileTreeItem,
+  allSelectedItems: HiddenFileTreeItem[],
+): Promise<void> => {
+  const filesToProcess = allSelectedItems || [item];
+  await removeFilesFromExcludeList(filesToProcess);
+  refresh();
+};
+
+export const showAll = async (item: HiddenFileTreeItem): Promise<void> => {
+  await toggleAllFilesVisibility("show");
+  refresh();
+};
+export const hideAll = async (item: HiddenFileTreeItem): Promise<void> => {
+  await toggleAllFilesVisibility("hide");
   refresh();
 };
 
@@ -58,18 +70,15 @@ export const refresh = (item?: HiddenFileTreeItem): void => {
 
 export const toggleRowVisibility = async (
   item: HiddenFileTreeItem,
+  allSelectedItems: HiddenFileTreeItem[],
 ): Promise<void> => {
-  const path = item.label;
+  const filesToProcess = allSelectedItems || [item];
   const fileObject = getFileVisibilityExcludedFiles();
 
-  if (fileObject[path] !== undefined) {
-    fileObject[path] = !fileObject[path];
-    console.log(
-      fileObject[path],
-      `${item.label} should now be`,
-      fileObject[path] ? "hidden" : "visible",
-    );
+  for (const item of filesToProcess) {
+    fileObject[item.label] = !fileObject[item.label];
   }
+
   await saveExcludeFiles(fileObject);
   refresh();
 };
@@ -77,9 +86,12 @@ export const toggleRowVisibility = async (
 export const registerCommands = (context: ExtensionContext) => {
   const hideFilesCommands: Array<[string, (...args: any[]) => any]> = [
     [FileVisibilityActions.HIDE, hide],
+    [FileVisibilityActions.TOGGLE_SELECTED, toggleRowVisibility],
     [FileVisibilityActions.HIDE_FILE_EXTENSION, hideFileExtension],
     [FileVisibilityActions.TOGGLE_ROW_VISIBILITY, toggleRowVisibility],
-    [FileVisibilityActions.SHOW, show],
+    [FileVisibilityActions.REMOVE, removeFiles],
+    [FileVisibilityActions.SHOW_ALL, showAll],
+    [FileVisibilityActions.HIDE_ALL, hideAll],
     [FileVisibilityActions.REFRESH, refresh],
   ];
 
