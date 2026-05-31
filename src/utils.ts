@@ -5,7 +5,7 @@ import {
   ExtensionContext,
   RelativePattern,
 } from "vscode";
-
+import * as vscode from "vscode";
 import * as fs from "fs";
 import { HiddenFilesProvider } from "./HiddenFilesProvider";
 import { refresh, registerCommands } from "./commands";
@@ -14,6 +14,8 @@ import {
   saveDefaultExclude,
   saveExcludeFiles,
 } from "./config";
+
+import * as config from "../config.json";
 
 export let hiddenFilesProvider: HiddenFilesProvider;
 let uConsole: OutputChannel;
@@ -62,6 +64,15 @@ export const init = (context: ExtensionContext) => {
         path.endsWith(".vscode")
       ) {
         shouldReset = true;
+        const selection = vscode.window.showWarningMessage(
+          `The .vscode directory and settings.json are needed for the ${config.EXT_ID} extension. 
+           The .vscode/settings.json will be created again. You'll need to disable the extension to stop this from happening.
+           
+           Consider adding .vscode to your .gitignore (or hiding it) if you wish to continue using the extension as an alternative. 
+          `,
+          { modal: true }, // Forces a true center-screen confirmation popup
+          "OK", // Button 1
+        );
         break;
       }
     }

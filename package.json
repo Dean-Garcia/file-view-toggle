@@ -65,12 +65,12 @@
           "group": "navigation@2"
         },
         {
-          "command": "file-visibility.refresh",
+          "command": "file-visibility.hide-selected",
           "when": "view == file-view-toggle",
           "group": "navigation@3"
         },
         {
-          "command": "file-visibility.hide-selected",
+          "command": "file-visibility.refresh",
           "when": "view == file-view-toggle",
           "group": "navigation@4"
         }
@@ -104,7 +104,7 @@
       },
       {
         "command": "file-visibility.hide-selected",
-        "title": "Toggle Visibility of Selected",
+        "title": "Toggle Visibility of Active Selection",
         "icon": "$(activate-breakpoints)"
       },
       {
