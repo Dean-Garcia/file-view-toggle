@@ -1,19 +1,19 @@
 {
-  "name": "file-view-toggle",
-  "displayName": "file-view-toggle",
+  "name": "{{EXT_ID}}",
+  "displayName": "{{EXT_ID}}",
   "description": "Allows user to select files and directories to toggle off and on in the explorer view",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.118.0"
   },
   "categories": ["Other"],
-  "activationEvents": ["onView:file-view-toggle", "onStartupFinished"],
+  "activationEvents": ["onView:{{EXT_ID}}", "onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
       "title": "Hide Files",
       "properties": {
-        "file-visibility.files": {
+        "{{VIEW_ID}}.files": {
           "type": "object",
           "default": {},
           "description": "List of files to hide."
@@ -23,66 +23,66 @@
     "views": {
       "explorer": [
         {
-          "id": "file-view-toggle",
+          "id": "{{EXT_ID}}",
           "name": "Hidden files"
         }
       ]
     },
     "submenus": [
       {
-        "id": "file-visibility.submenu",
+        "id": "{{VIEW_ID}}.submenu",
         "label": "Hide"
       },
       {
-        "id": "file-visibility.submenu",
+        "id": "{{VIEW_ID}}.submenu",
         "label": "Hide Extension"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "submenu": "file-visibility.submenu",
-          "group": "file-visibility"
+          "submenu": "{{VIEW_ID}}.submenu",
+          "group": "{{VIEW_ID}}"
         }
       ],
-      "file-visibility.submenu": [
+      "{{VIEW_ID}}.submenu": [
         {
-          "command": "file-visibility.hide"
+          "command": "{{VIEW_ID}}.hide"
         },
         {
-          "command": "file-visibility.hide-extension"
+          "command": "{{VIEW_ID}}.hide-extension"
         }
       ],
       "view/title": [
         {
-          "command": "file-visibility.refresh",
-          "when": "view == file-view-toggle",
+          "command": "{{VIEW_ID}}.refresh",
+          "when": "view == {{EXT_ID}}",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "file-visibility.deleteItem",
-          "when": "view == file-view-toggle",
+          "command": "{{VIEW_ID}}.deleteItem",
+          "when": "view == {{EXT_ID}}",
           "group": "inline"
         }
       ]
     },
     "commands": [
       {
-        "command": "file-visibility.hide",
+        "command": "{{VIEW_ID}}.hide",
         "title": "Hide"
       },
       {
-        "command": "file-visibility.hide-extension",
+        "command": "{{VIEW_ID}}.hide-extension",
         "title": "Hide Extension"
       },
       {
-        "command": "file-visibility.show",
+        "command": "{{VIEW_ID}}.show",
         "title": "Show"
       },
       {
-        "command": "file-visibility.refresh",
+        "command": "{{VIEW_ID}}.refresh",
         "title": "Refresh",
         "icon": {
           "light": "resources/light/refresh.svg",
@@ -90,12 +90,12 @@
         }
       },
       {
-        "command": "file-visibility.deleteItem",
+        "command": "{{VIEW_ID}}.deleteItem",
         "title": "Delete",
         "icon": "$(trash)"
       },
       {
-        "command": "file-visibility.toggle-row-visibility",
+        "command": "{{VIEW_ID}}.toggle-row-visibility",
         "title": "Toggle Row Visibility"
       }
     ]

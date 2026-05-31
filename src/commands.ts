@@ -1,5 +1,10 @@
 import { ExtensionContext, commands } from "vscode";
-import { addFilesToExcluded, removeFileFromExcludeList } from "./config";
+import {
+  addFilesToExcluded,
+  getFileVisibilityExcludedFiles,
+  removeFileFromExcludeList,
+  saveExcludeFiles,
+} from "./config";
 import { $log, getFileExtension, hiddenFilesProvider } from "./utils";
 import { FileVisibilityActions } from "./constants";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
@@ -21,7 +26,7 @@ export const hide = (...args: [VsCodeFile, Array<VsCodeFile>]): void => {
   refresh();
 };
 
-export const hideExtension = (
+export const hideFileExtension = (
   ...args: [VsCodeFile, Array<VsCodeFile>]
 ): void => {
   const [, files] = args;
@@ -41,29 +46,38 @@ export const show = (fileRelativePath: string): void => {
   refresh();
 };
 
-export const refresh = (): void => {
-  setTimeout(() => {
-    if (hiddenFilesProvider) {
-      // Refresh HIDDEN FILES view
-      hiddenFilesProvider.refresh();
-
-      // Refresh EXPLORER view
-      commands.executeCommand("workbench.files.action.refreshFilesExplorer");
-    }
-  }, 1000);
+export const refresh = (item?: HiddenFileTreeItem): void => {
+  if (hiddenFilesProvider) {
+    // Refresh HIDDEN FILES view
+    hiddenFilesProvider.refresh(item);
+    // Refresh EXPLORER view
+    commands.executeCommand("workbench.files.action.refreshFilesExplorer");
+  }
 };
 
-export const toggleRowVisibility = (item: HiddenFileTreeItem): void => {
-  item.isHidden = !item.isHidden;
-  item.iconPath = new vscode.ThemeIcon(item.isHidden ? "eye" : "eye-closed");
-  hiddenFilesProvider.refresh();
+export const toggleRowVisibility = async (
+  item: HiddenFileTreeItem,
+): Promise<void> => {
+  const path = item.label;
+  const fileObject = getFileVisibilityExcludedFiles();
+
+  if (fileObject[path] !== undefined) {
+    fileObject[path] = !fileObject[path];
+    console.log(
+      fileObject[path],
+      `${item.label} should now be`,
+      fileObject[path] ? "hidden" : "visible",
+    );
+  }
+  await saveExcludeFiles(fileObject);
+  refresh();
 };
 
 export const registerCommands = (context: ExtensionContext) => {
   const hideFilesCommands: Array<[string, (...args: any[]) => any]> = [
     [FileVisibilityActions.HIDE, hide],
-    [FileVisibilityActions.HIDE_EXTENSION, hideExtension],
-    // [FileVisibilityActions.TOGGLE_ROW_VISIBILITY, toggleRowVisibility],
+    [FileVisibilityActions.HIDE_FILE_EXTENSION, hideFileExtension],
+    [FileVisibilityActions.TOGGLE_ROW_VISIBILITY, toggleRowVisibility],
     [FileVisibilityActions.SHOW, show],
     [FileVisibilityActions.REFRESH, refresh],
   ];

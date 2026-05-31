@@ -37,8 +37,8 @@ export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
   readonly onDidChangeTreeData: Event<TreeItem | undefined | null | void> =
     this._onDidChangeTreeData.event;
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
+  refresh(element?: HiddenFileTreeItem): void {
+    this._onDidChangeTreeData.fire(element);
   }
 }
 

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as config from "../config.json";
 
 export class HiddenFileTreeItem extends vscode.TreeItem {
   constructor(
@@ -18,10 +19,11 @@ export class HiddenFileTreeItem extends vscode.TreeItem {
       : "viewableItem_hidden";
 
     this.updateVisuals();
+    this.id = `${label}_${isHidden ? "hidden" : "visible"}`;
 
     // Step 4: Make the row clickable to handle the eye icon toggle action
     this.command = {
-      command: "file-visibility.toggle-row-visibility",
+      command: `${config.VIEW_ID}.toggle-row-visibility`,
       title: "Toggle Visibility",
       arguments: [this], // Passes this specific tree item to the action handler
     };

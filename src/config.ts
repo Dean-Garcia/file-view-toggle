@@ -4,6 +4,7 @@ import { rootFolder } from "./utils";
 import { ExcludedFiles } from "./types";
 import { FILE_VISIBILITY } from "./constants";
 import * as vscode from "vscode";
+import * as config from "../config.json";
 
 const defaultExclude: Record<string, boolean> = {};
 
@@ -21,7 +22,7 @@ export const workspaceFilesConfiguration = (): WorkspaceConfiguration => {
  *
  * @param calculateDefaultExclude
  */
-export const saveDefaultExclude = (calculateDefaultExclude = true) => {
+export const saveDefaultExclude = async (calculateDefaultExclude = true) => {
   if (calculateDefaultExclude) {
     // Get files.exclude array [filePath, boolean]
     const exclude = workspaceFilesConfiguration().get("exclude") as Record<
@@ -40,14 +41,14 @@ export const saveDefaultExclude = (calculateDefaultExclude = true) => {
     }
 
     // Update files.exclude with files.exclude.... ????
-    workspaceFilesConfiguration().update(
+    await workspaceFilesConfiguration().update(
       "exclude",
       exclude,
       vscode.ConfigurationTarget.Workspace,
     );
   } else {
     // Update files.exclude with defaultExclude
-    workspaceFilesConfiguration().update(
+    await workspaceFilesConfiguration().update(
       "exclude",
       defaultExclude,
       vscode.ConfigurationTarget.Workspace,
@@ -60,17 +61,16 @@ export const saveDefaultExclude = (calculateDefaultExclude = true) => {
  * @returns file-visibility config object in settings.json
  */
 export const getFileVisibilityConfig = (): WorkspaceConfiguration => {
-  return workspace.getConfiguration(FILE_VISIBILITY);
+  return workspace.getConfiguration(config.VIEW_ID);
 };
 
 /**
  *
  */
-export const updateFilesView = (files: ExcludedFiles) => {
+export const updateFilesView = async (files: ExcludedFiles) => {
   // Create new object and add defaultExclude
   const newExcludedFiles = { ...defaultExclude, ...files };
-  console.log("updatefilesview", files);
-  workspaceFilesConfiguration().update(
+  await workspaceFilesConfiguration().update(
     "exclude",
     newExcludedFiles,
     vscode.ConfigurationTarget.Workspace,
@@ -78,14 +78,13 @@ export const updateFilesView = (files: ExcludedFiles) => {
 };
 
 // Update files-visilibity with files
-export const saveExcludeFiles = (files: ExcludedFiles) => {
-  console.log("saveExcludeFiles", files);
-  getFileVisibilityConfig().update(
+export const saveExcludeFiles = async (files: ExcludedFiles) => {
+  await getFileVisibilityConfig().update(
     "files",
     files,
     vscode.ConfigurationTarget.Workspace,
   );
-  updateFilesView(files);
+  await updateFilesView(files);
 };
 
 // Removes file from files-visibility.files list
@@ -110,7 +109,6 @@ export const addFilesToExcluded = (paths: Array<string>) => {
       let cleanFileOrDirPath = path
         .replace(rootFolder + "/", "")
         .replace(rootFolder, "");
-      console.log("cleanFileOrDirPath", cleanFileOrDirPath);
 
       if (!Object.hasOwn(files, path)) {
         files[cleanFileOrDirPath] = true;
