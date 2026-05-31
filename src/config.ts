@@ -1,10 +1,9 @@
 import { WorkspaceConfiguration, workspace } from "vscode";
-import { refresh } from "./commands";
 import { rootFolder } from "./utils";
 import { ExcludedFiles } from "./types";
-import { FILE_VISIBILITY } from "./constants";
 import * as vscode from "vscode";
 import * as config from "../config.json";
+import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
 
 const defaultExclude: Record<string, boolean> = {};
 
@@ -88,16 +87,16 @@ export const saveExcludeFiles = async (files: ExcludedFiles) => {
 };
 
 // Removes file from files-visibility.files list
-export const removeFileFromExcludeList = (relativePath: string) => {
+export const removeFileFromExcludeList = async (item: HiddenFileTreeItem) => {
   // Get files-visibility files. Need to spread otherwise will error.
   const files = { ...getFileVisibilityExcludedFiles() };
-  delete files[relativePath];
+  delete files[item.label];
 
-  saveExcludeFiles(files);
+  await saveExcludeFiles(files);
 };
 
 // Add files to exclude list
-export const addFilesToExcluded = (paths: Array<string>) => {
+export const addFilesToExcluded = async (paths: Array<string>) => {
   // get existing
   const files = { ...getFileVisibilityExcludedFiles() };
 
@@ -115,7 +114,7 @@ export const addFilesToExcluded = (paths: Array<string>) => {
       }
     }
   }
-  saveExcludeFiles(files);
+  await saveExcludeFiles(files);
 };
 
 // Get files from file-visibility.files

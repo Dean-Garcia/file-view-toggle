@@ -19,6 +19,7 @@ export class HiddenFileTreeItem extends vscode.TreeItem {
       : "viewableItem_hidden";
 
     this.updateVisuals();
+    this.tooltip = `Toggle Visibility for ${label}`;
     this.id = `${label}_${isHidden ? "hidden" : "visible"}`;
 
     // Step 4: Make the row clickable to handle the eye icon toggle action

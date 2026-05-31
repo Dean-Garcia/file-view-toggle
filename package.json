@@ -50,7 +50,7 @@
           "command": "file-visibility.hide"
         },
         {
-          "command": "file-visibility.hide-extension"
+          "command": "file-visibility.hide-file-extension"
         }
       ],
       "view/title": [
@@ -62,7 +62,7 @@
       ],
       "view/item/context": [
         {
-          "command": "file-visibility.deleteItem",
+          "command": "file-visibility.show",
           "when": "view == file-view-toggle",
           "group": "inline"
         }
@@ -74,12 +74,8 @@
         "title": "Hide"
       },
       {
-        "command": "file-visibility.hide-extension",
-        "title": "Hide Extension"
-      },
-      {
-        "command": "file-visibility.show",
-        "title": "Show"
+        "command": "file-visibility.hide-file-extension",
+        "title": "Hide File Extension"
       },
       {
         "command": "file-visibility.refresh",
@@ -90,7 +86,7 @@
         }
       },
       {
-        "command": "file-visibility.deleteItem",
+        "command": "file-visibility.show",
         "title": "Delete",
         "icon": "$(trash)"
       },

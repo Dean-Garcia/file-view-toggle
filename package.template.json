@@ -47,22 +47,22 @@
       ],
       "{{VIEW_ID}}.submenu": [
         {
-          "command": "{{VIEW_ID}}.hide"
+          "command": "{{VIEW_ID}}.{{HIDE}}"
         },
         {
-          "command": "{{VIEW_ID}}.hide-extension"
+          "command": "{{VIEW_ID}}.{{HIDE_FILE_EXTENSION}}"
         }
       ],
       "view/title": [
         {
-          "command": "{{VIEW_ID}}.refresh",
+          "command": "{{VIEW_ID}}.{{REFRESH}}",
           "when": "view == {{EXT_ID}}",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "{{VIEW_ID}}.deleteItem",
+          "command": "{{VIEW_ID}}.{{SHOW}}",
           "when": "view == {{EXT_ID}}",
           "group": "inline"
         }
@@ -70,19 +70,15 @@
     },
     "commands": [
       {
-        "command": "{{VIEW_ID}}.hide",
+        "command": "{{VIEW_ID}}.{{HIDE}}",
         "title": "Hide"
       },
       {
-        "command": "{{VIEW_ID}}.hide-extension",
-        "title": "Hide Extension"
+        "command": "{{VIEW_ID}}.{{HIDE_FILE_EXTENSION}}",
+        "title": "Hide File Extension"
       },
       {
-        "command": "{{VIEW_ID}}.show",
-        "title": "Show"
-      },
-      {
-        "command": "{{VIEW_ID}}.refresh",
+        "command": "{{VIEW_ID}}.{{REFRESH}}",
         "title": "Refresh",
         "icon": {
           "light": "resources/light/refresh.svg",
@@ -90,12 +86,12 @@
         }
       },
       {
-        "command": "{{VIEW_ID}}.deleteItem",
+        "command": "{{VIEW_ID}}.{{SHOW}}",
         "title": "Delete",
         "icon": "$(trash)"
       },
       {
-        "command": "{{VIEW_ID}}.toggle-row-visibility",
+        "command": "{{VIEW_ID}}.{{TOGGLE_ROW_VISIBILITY}}",
         "title": "Toggle Row Visibility"
       }
     ]

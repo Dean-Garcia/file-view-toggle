@@ -15,34 +15,35 @@ interface VsCodeFile {
   path: string;
 }
 
-export const hide = (...args: [VsCodeFile, Array<VsCodeFile>]): void => {
+export const hide = async (
+  ...args: [VsCodeFile, Array<VsCodeFile>]
+): Promise<void> => {
   const [, files] = args;
 
   const filesToExclude = files
     .filter((file) => typeof file.path === "string")
     .map((file) => file.path);
-  addFilesToExcluded(filesToExclude);
+  await addFilesToExcluded(filesToExclude);
 
   refresh();
 };
 
-export const hideFileExtension = (
+export const hideFileExtension = async (
   ...args: [VsCodeFile, Array<VsCodeFile>]
-): void => {
+): Promise<void> => {
   const [, files] = args;
-
   const filesToExclude = files
     .filter((file) => typeof file.path === "string")
     .map((file) => {
       return `**/*.${getFileExtension(file.path)}`;
     });
-  addFilesToExcluded(filesToExclude);
+  await addFilesToExcluded(filesToExclude);
 
   refresh();
 };
 
-export const show = (fileRelativePath: string): void => {
-  removeFileFromExcludeList(fileRelativePath);
+export const show = async (item: HiddenFileTreeItem): Promise<void> => {
+  await removeFileFromExcludeList(item);
   refresh();
 };
 

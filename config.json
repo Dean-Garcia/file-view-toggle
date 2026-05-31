@@ -1,4 +1,9 @@
 {
   "EXT_ID": "file-view-toggle",
-  "VIEW_ID": "file-visibility"
+  "VIEW_ID": "file-visibility",
+  "HIDE": "hide",
+  "SHOW": "show",
+  "HIDE_FILE_EXTENSION": "hide-file-extension",
+  "REFRESH": "refresh",
+  "TOGGLE_ROW_VISIBILITY": "toggle-row-visibility"
 }
