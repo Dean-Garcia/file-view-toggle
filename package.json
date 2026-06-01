@@ -1,13 +1,33 @@
 {
   "name": "file-view-toggle",
-  "displayName": "file-view-toggle",
+  "displayName": "Show/Hide Files, Directories, and Extensions",
   "description": "Allows user to select files and directories to toggle off and on in the explorer view",
   "version": "0.0.1",
+  "publisher": "Dean Garcia",
+  "author": {
+    "name": "Dean Garcia",
+    "url": "https://github.com/Dean-Garcia"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.118.0"
   },
-  "categories": ["Other"],
+  "categories": ["Visualization", "Other"],
+  "keywords": [
+    "exclude",
+    "show",
+    "explorer",
+    "files",
+    "hidden",
+    "toggle",
+    "hide",
+    "filter"
+  ],
   "activationEvents": ["onView:file-view-toggle", "onStartupFinished"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dean-Garcia/file-view-toggle.git"
+  },
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
