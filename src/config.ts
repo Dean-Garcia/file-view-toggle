@@ -18,6 +18,16 @@ export const workspaceFilesConfiguration = (): WorkspaceConfiguration => {
 };
 
 /**
+ * @returns workspace config for 'files'
+ */
+export const workspaceSearchConfiguration = (): WorkspaceConfiguration => {
+  return workspace.getConfiguration(
+    "search",
+    workspace.workspaceFolders?.[0].uri,
+  );
+};
+
+/**
  *
  * @param calculateDefaultExclude
  */
@@ -72,6 +82,19 @@ export const updateFilesView = async (files: ExcludedFiles) => {
   await workspaceFilesConfiguration().update(
     "exclude",
     newExcludedFiles,
+    vscode.ConfigurationTarget.Workspace,
+  );
+
+  // [TODO] temporary until search toggling added
+  // Map through files and make them false, add to search.exclude
+  const searchObj = { ...files };
+  Object.entries(searchObj).map(([path, value]) => {
+    searchObj[path] = false;
+  });
+
+  await workspaceSearchConfiguration().update(
+    "exclude",
+    searchObj,
     vscode.ConfigurationTarget.Workspace,
   );
 };
