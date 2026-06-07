@@ -4,9 +4,9 @@
 export type HiddenFilePatternConfigs = {
   [filePath: string]: {
     shortenedPath: string;
+    treeViewFolder: TreeFolderCategories;
     isHidden: boolean;
     isNotSearchable: boolean;
-    isFavorite: boolean;
     isLocked: boolean;
   };
 };
@@ -26,3 +26,13 @@ export type FilePatternProps = Pick<
   HiddenFilePatternConfigs["filePath"],
   keyof HiddenFilePatternConfigs["filePath"]
 >;
+
+export const TreeFolderCategories = {
+  FAVORITES: "favorites",
+  EXTENSIONS: "extensions",
+  FILES: "files",
+  DEFAULT: "default",
+};
+
+export type TreeFolderCategories =
+  (typeof TreeFolderCategories)[keyof typeof TreeFolderCategories];

@@ -4,6 +4,7 @@ import {
   HiddenFilePatternConfigs,
   FilePatternProps,
   PatternRules,
+  TreeFolderCategories,
 } from "../types";
 import * as vscode from "vscode";
 import * as config from "../../config.json";
@@ -205,9 +206,9 @@ export const getDefaultConfigs = (path: string) => {
 
   return {
     shortenedPath: shortPathString,
+    treeViewFolder: TreeFolderCategories.FILES,
     isHidden: true,
     isNotSearchable: false,
-    isFavorite: false,
     isLocked: false,
   };
 };

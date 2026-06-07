@@ -9,27 +9,64 @@ import {
 import { getFileVisibilityFileConfigs } from "./utils/configUtils";
 import { FileVisibilityActions } from "./constants";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
+import { TreeFolderItem } from "./TreeFolderItem";
+import * as vscode from "vscode";
+import { TreeFolderCategories } from "./types";
 
-export class HiddenFilesProvider implements TreeDataProvider<TreeItem> {
+export class HiddenFilesProvider implements TreeDataProvider<
+  TreeFolderItem | TreeItem
+> {
   constructor() {}
 
-  getTreeItem(element: TreeItem): TreeItem {
+  getTreeItem(element: TreeFolderItem | TreeItem): TreeItem {
     return element;
   }
 
-  getChildren(element?: TreeItem) {
-    const files = getFileVisibilityFileConfigs();
-    let treeItemChildren: Array<HiddenFileTreeItem> = [];
-    for (const [path, props] of Object.entries(files)) {
-      const item = new HiddenFileTreeItem(
-        path,
-        props.isHidden,
-        props.isLocked,
-        props.isNotSearchable,
-        TreeItemCollapsibleState.None,
-      );
-      treeItemChildren.push(item);
+  async getChildren(element?: TreeItem | TreeFolderItem) {
+    // 1. Root Level: Return the three sections
+    if (!element) {
+      return [
+        new TreeFolderItem(
+          "Favorites",
+          "favorites",
+          "Designated Favorite Files",
+        ),
+        new TreeFolderItem("Files", "files", "Hidden Files"),
+        new TreeFolderItem("Extensions", "extensions", "Hidden Extensions"),
+        new TreeFolderItem(
+          "Default",
+          "default",
+          "Files designated in files.exclude by default outside the extension",
+        ),
+      ];
     }
+
+    // 2. Child Level: Only folders have children
+    if (element instanceof TreeFolderItem) {
+      return this.getChildrenForFolder(element.id);
+    }
+
+    // Files have no children
+    return [];
+  }
+
+  private getChildrenForFolder(folderId: TreeFolderCategories): TreeItem[] {
+    const filesConfig = getFileVisibilityFileConfigs();
+    let treeItemChildren: Array<TreeItem> = [];
+
+    for (const [path, props] of Object.entries(filesConfig)) {
+      if (filesConfig[path] && filesConfig[path].treeViewFolder === folderId) {
+        const item = new HiddenFileTreeItem(
+          path,
+          props.isHidden,
+          props.isLocked,
+          props.isNotSearchable,
+          TreeItemCollapsibleState.None,
+        );
+        treeItemChildren.push(item);
+      }
+    }
+
     return treeItemChildren;
   }
 
