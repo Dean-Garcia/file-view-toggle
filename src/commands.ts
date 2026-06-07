@@ -1,14 +1,15 @@
 import { ExtensionContext, commands } from "vscode";
 import {
   addFilesToExcluded,
-  getFileVisibilityExcludedFiles,
+  getFileVisibilityFileConfigs,
   removeFilesFromExcludeList,
   saveExcludeFiles,
   toggleAllFilesVisibility,
-} from "./config";
-import { $log, getFileExtension, hiddenFilesProvider } from "./utils";
+} from "./utils/configUtils";
+import { getFileExtension, hiddenFilesProvider } from "./utils/fileUtils";
 import { FileVisibilityActions } from "./constants";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
+import { FilePatternProps } from "./types";
 
 interface VsCodeFile {
   path: string;
@@ -73,12 +74,11 @@ export const toggleRowVisibility = async (
   allSelectedItems: HiddenFileTreeItem[],
 ): Promise<void> => {
   const filesToProcess = allSelectedItems || [item];
-  const fileObject = getFileVisibilityExcludedFiles();
+  const fileObject = { ...getFileVisibilityFileConfigs() };
 
   for (const item of filesToProcess) {
-    fileObject[item.label] = !fileObject[item.label];
+    fileObject[item.label].isHidden = !fileObject[item.label]?.isHidden;
   }
-
   await saveExcludeFiles(fileObject);
   refresh();
 };
@@ -97,6 +97,5 @@ export const registerCommands = (context: ExtensionContext) => {
 
   for (const [command, handler] of hideFilesCommands) {
     context.subscriptions.push(commands.registerCommand(command, handler));
-    $log(`Registred command ${command}`);
   }
 };

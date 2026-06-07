@@ -1,9 +1,13 @@
 import { WorkspaceConfiguration, workspace } from "vscode";
-import { rootFolder } from "./utils";
-import { ExcludedFiles } from "./types";
+import { rootFolder, shortenFilePath } from "./fileUtils";
+import {
+  HiddenFilePatternConfigs,
+  FilePatternProps,
+  PatternRules,
+} from "../types";
 import * as vscode from "vscode";
-import * as config from "../config.json";
-import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
+import * as config from "../../config.json";
+import { HiddenFileTreeItem } from "../HiddenFileTreeItem";
 
 const defaultExclude: Record<string, boolean> = {};
 
@@ -40,7 +44,7 @@ export const saveDefaultExclude = async (calculateDefaultExclude = true) => {
     >;
 
     // Get file-visibility.files
-    const excluded = getFileVisibilityExcludedFiles();
+    const excluded = { ...getFileVisibilityFileConfigs() };
 
     // If file-visibility.files includes filePath from files.excluded, then add to defaultExclude
     for (const filePath in exclude) {
@@ -76,31 +80,40 @@ export const getFileVisibilityConfig = (): WorkspaceConfiguration => {
 /**
  *
  */
-export const updateFilesView = async (files: ExcludedFiles) => {
+export const updateFilesView = async (
+  files: Record<string, FilePatternProps>,
+) => {
   // Create new object and add defaultExclude
-  const newExcludedFiles = { ...defaultExclude, ...files };
+  const fileExcludeObj: PatternRules = {};
+  Object.entries(files).map(([path, props]) => {
+    fileExcludeObj[path] = props.isHidden;
+  });
+  const newExcludedFiles: PatternRules = {
+    ...defaultExclude,
+    ...fileExcludeObj,
+  };
   await workspaceFilesConfiguration().update(
     "exclude",
     newExcludedFiles,
     vscode.ConfigurationTarget.Workspace,
   );
 
-  // [TODO] temporary until search toggling added
-  // Map through files and make them false, add to search.exclude
-  const searchObj = { ...files };
-  Object.entries(searchObj).map(([path, value]) => {
-    searchObj[path] = false;
+  const searchExcludeObj: PatternRules = {};
+  Object.entries(files).map(([path, props]) => {
+    searchExcludeObj[path] = props.isNotSearchable;
   });
 
   await workspaceSearchConfiguration().update(
     "exclude",
-    searchObj,
+    searchExcludeObj,
     vscode.ConfigurationTarget.Workspace,
   );
 };
 
 // Update files-visilibity with files
-export const saveExcludeFiles = async (files: ExcludedFiles) => {
+export const saveExcludeFiles = async (
+  files: Record<string, FilePatternProps>,
+) => {
   await getFileVisibilityConfig().update(
     "files",
     files,
@@ -114,7 +127,7 @@ export const removeFilesFromExcludeList = async (
   items: HiddenFileTreeItem[],
 ) => {
   // Get files-visibility files. Need to spread otherwise will error.
-  const files = { ...getFileVisibilityExcludedFiles() };
+  const files = { ...getFileVisibilityFileConfigs() };
   for (const item of items) {
     delete files[item.label];
   }
@@ -125,7 +138,7 @@ export const removeFilesFromExcludeList = async (
 // Add files to exclude list
 export const addFilesToExcluded = async (paths: Array<string>) => {
   // get existing
-  const files = { ...getFileVisibilityExcludedFiles() };
+  const files = { ...getFileVisibilityFileConfigs() };
 
   // files = {'index.ts': true, 'package.json': true}
 
@@ -137,7 +150,8 @@ export const addFilesToExcluded = async (paths: Array<string>) => {
         .replace(rootFolder, "");
 
       if (!Object.hasOwn(files, path)) {
-        files[cleanFileOrDirPath] = true;
+        const props = getDefaultConfigs(cleanFileOrDirPath);
+        files[cleanFileOrDirPath] = props;
       }
     }
   }
@@ -145,23 +159,55 @@ export const addFilesToExcluded = async (paths: Array<string>) => {
 };
 
 export const toggleAllFilesVisibility = async (hideOrShow: "hide" | "show") => {
-  const files = { ...getFileVisibilityExcludedFiles() };
-  const toggledFiles: ExcludedFiles = {};
+  const files = { ...getFileVisibilityFileConfigs() };
+  const toggledFiles: Record<string, FilePatternProps> = {};
 
   const wantToHide = hideOrShow === "hide";
 
-  Object.entries(files).forEach(([file, isHidden]) => {
-    toggledFiles[file] = wantToHide;
+  Object.entries(files).forEach(([file, props]) => {
+    toggledFiles[file] = { ...props, isHidden: wantToHide };
   });
 
   await saveExcludeFiles(toggledFiles);
 };
 
 // Get files from file-visibility.files
-export const getFileVisibilityExcludedFiles = (): Record<string, boolean> => {
-  const files = getFileVisibilityConfig().get<Record<string, boolean>>(
+export const getFileVisibilityFileConfigs = (): HiddenFilePatternConfigs => {
+  const files = getFileVisibilityConfig().get<HiddenFilePatternConfigs>(
     "files",
     {},
   );
-  return files;
+  const sanitizedFileConfigs: HiddenFilePatternConfigs = {};
+
+  // Need to sanitize props object to be able to read from it
+  // Returns a Proxy (object) otherwise, leading to errors when reading things like files[path].isHidden
+  Object.entries(files).map(([file, props]) => {
+    sanitizedFileConfigs[file] = Object.assign({}, props);
+  });
+  return sanitizedFileConfigs;
+};
+
+export const getFileVisibilityPatterns = (
+  property: keyof FilePatternProps,
+): Record<string, boolean | string> => {
+  const files = { ...getFileVisibilityFileConfigs() };
+  const fileVisibilityPatterns: Record<string, boolean | string> = {};
+
+  Object.entries(files).forEach(([file, props]) => {
+    fileVisibilityPatterns[file] = props[property];
+  });
+
+  return fileVisibilityPatterns;
+};
+
+export const getDefaultConfigs = (path: string) => {
+  const shortPathString = shortenFilePath(path, 2);
+
+  return {
+    shortenedPath: shortPathString,
+    isHidden: true,
+    isNotSearchable: false,
+    isFavorite: false,
+    isLocked: false,
+  };
 };

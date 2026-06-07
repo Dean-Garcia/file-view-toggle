@@ -5,6 +5,8 @@ export class HiddenFileTreeItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
     public isHidden: boolean,
+    public isLocked: boolean,
+    public isNotSearchable: boolean,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
     // Step 1: Pass the clean string label without any formatting markup

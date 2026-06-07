@@ -1,6 +1,6 @@
 import { window, ExtensionContext } from "vscode";
-import { saveDefaultExclude } from "./config";
-import { init, hiddenFilesProvider } from "./utils";
+import { saveDefaultExclude } from "./utils/configUtils";
+import { init, hiddenFilesProvider } from "./utils/fileUtils";
 import * as vscode from "vscode";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
 import { FileVisibilityActions } from "./constants";
