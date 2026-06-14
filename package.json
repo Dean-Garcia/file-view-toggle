@@ -144,37 +144,37 @@
       },
       {
         "command": "file-visibility.toggle-search-on",
-        "title": "Currently allows search, go to reference, etc.  Click to disable",
+        "title": "Currently allows search, go to reference, etc. on this file. Click to disable",
         "icon": "$(search)"
       },
       {
         "command": "file-visibility.toggle-search-off",
-        "title": "Removed from search results and prevents go to reference and similar features.  Click to enable ",
+        "title": "Currently removed from search results and prevents go to reference and similar features.  Click to add to search",
         "icon": "$(search-stop)"
       },
       {
         "command": "file-visibility.toggle-favorite-on",
-        "title": "Favorited. Click to move out of favorites",
+        "title": "Move out of favorites",
         "icon": "$(heart-filled)"
       },
       {
         "command": "file-visibility.toggle-favorite-off",
-        "title": "Click to move to favorites folder",
+        "title": "Move to favorites folder",
         "icon": "$(heart)"
       },
       {
         "command": "file-visibility.toggle-lock-on",
-        "title": "Locked. Prevents search/visibility setting changes while locked. Click to unlock.",
+        "title": "Locked. Prevents search/visibility setting changes. Click to unlock.",
         "icon": "$(lock)"
       },
       {
         "command": "file-visibility.toggle-lock-off",
-        "title": "Click to lock, which prevents search/visibility setting changes",
+        "title": "Click to lock and prevent search/visibility setting changes",
         "icon": "$(unlock)"
       },
       {
         "command": "file-visibility.remove",
-        "title": "Remove",
+        "title": "Remove file from list",
         "icon": "$(trash)"
       },
       {
