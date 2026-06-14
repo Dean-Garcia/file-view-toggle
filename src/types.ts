@@ -8,6 +8,7 @@ export type HiddenFilePatternConfigs = {
     isHidden: boolean;
     isNotSearchable: boolean;
     isLocked: boolean;
+    isFavorite: boolean;
   };
 };
 

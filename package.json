@@ -97,9 +97,39 @@
       ],
       "view/item/context": [
         {
+          "command": "file-visibility.toggle-favorite-on",
+          "when": "view == file-view-toggle && viewItem =~ /-favorite-/",
+          "group": "inline@1"
+        },
+        {
+          "command": "file-visibility.toggle-favorite-off",
+          "when": "view == file-view-toggle && viewItem =~ /-notFavorite-/",
+          "group": "inline@1"
+        },
+        {
+          "command": "file-visibility.toggle-search-on",
+          "when": "view == file-view-toggle && viewItem =~ /-searchable-/",
+          "group": "inline@2"
+        },
+        {
+          "command": "file-visibility.toggle-search-off",
+          "when": "view == file-view-toggle && viewItem =~ /-notSearchable-/",
+          "group": "inline@2"
+        },
+        {
+          "command": "file-visibility.toggle-lock-on",
+          "when": "view == file-view-toggle && viewItem =~ /-locked/",
+          "group": "inline@3"
+        },
+        {
+          "command": "file-visibility.toggle-lock-off",
+          "when": "view == file-view-toggle && viewItem =~ /-unlocked/",
+          "group": "inline@3"
+        },
+        {
           "command": "file-visibility.remove",
-          "when": "view == file-view-toggle",
-          "group": "inline"
+          "when": "view == file-view-toggle && viewItem =~ /viewableItem-/",
+          "group": "inline@4"
         }
       ]
     },
@@ -111,6 +141,36 @@
       {
         "command": "file-visibility.hide-file-extension",
         "title": "Hide File Extension"
+      },
+      {
+        "command": "file-visibility.toggle-search-on",
+        "title": "Currently allows search, go to reference, etc.  Click to disable",
+        "icon": "$(search)"
+      },
+      {
+        "command": "file-visibility.toggle-search-off",
+        "title": "Removed from search results and prevents go to reference and similar features.  Click to enable ",
+        "icon": "$(search-stop)"
+      },
+      {
+        "command": "file-visibility.toggle-favorite-on",
+        "title": "Favorited. Click to move out of favorites",
+        "icon": "$(heart-filled)"
+      },
+      {
+        "command": "file-visibility.toggle-favorite-off",
+        "title": "Click to move to favorites folder",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "file-visibility.toggle-lock-on",
+        "title": "Locked. Prevents search/visibility setting changes while locked. Click to unlock.",
+        "icon": "$(lock)"
+      },
+      {
+        "command": "file-visibility.toggle-lock-off",
+        "title": "Click to lock, which prevents search/visibility setting changes",
+        "icon": "$(unlock)"
       },
       {
         "command": "file-visibility.remove",

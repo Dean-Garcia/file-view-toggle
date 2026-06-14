@@ -55,12 +55,33 @@ export class HiddenFilesProvider implements TreeDataProvider<
     let treeItemChildren: Array<TreeItem> = [];
 
     for (const [path, props] of Object.entries(filesConfig)) {
-      if (filesConfig[path] && filesConfig[path].treeViewFolder === folderId) {
+      // Figure out if file matches the folder
+      const isInFolder =
+        filesConfig[path] && filesConfig[path].treeViewFolder === folderId;
+
+      // Determine if it should go to favorites
+      const isFavorite = filesConfig[path] && filesConfig[path].isFavorite;
+
+      // Since this is called per folder vs per file ultimately, need to filter what needs to go in
+      // Add favorites to favorites folder
+      if (folderId === TreeFolderCategories.FAVORITES && isFavorite) {
         const item = new HiddenFileTreeItem(
           path,
           props.isHidden,
           props.isLocked,
           props.isNotSearchable,
+          props.isFavorite,
+          TreeItemCollapsibleState.None,
+        );
+        treeItemChildren.push(item);
+      } else if (isInFolder && !isFavorite) {
+        // Else create normally and filter out favorites
+        const item = new HiddenFileTreeItem(
+          path,
+          props.isHidden,
+          props.isLocked,
+          props.isNotSearchable,
+          props.isFavorite,
           TreeItemCollapsibleState.None,
         );
         treeItemChildren.push(item);

@@ -97,9 +97,39 @@
       ],
       "view/item/context": [
         {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FAVORITE_ON}}",
+          "when": "view == {{EXT_ID}} && viewItem =~ /-favorite-/",
+          "group": "inline@1"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FAVORITE_OFF}}",
+          "when": "view == {{EXT_ID}} && viewItem =~ /-notFavorite-/",
+          "group": "inline@1"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_SEARCH_ON}}",
+          "when": "view == {{EXT_ID}} && viewItem =~ /-searchable-/",
+          "group": "inline@2"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_SEARCH_OFF}}",
+          "when": "view == {{EXT_ID}} && viewItem =~ /-notSearchable-/",
+          "group": "inline@2"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_LOCK_ON}}",
+          "when": "view == {{EXT_ID}} && viewItem =~ /-locked/",
+          "group": "inline@3"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_LOCK_OFF}}",
+          "when": "view == {{EXT_ID}} && viewItem =~ /-unlocked/",
+          "group": "inline@3"
+        },
+        {
           "command": "{{VIEW_ID}}.{{REMOVE}}",
-          "when": "view == {{EXT_ID}}",
-          "group": "inline"
+          "when": "view == {{EXT_ID}} && viewItem =~ /viewableItem-/",
+          "group": "inline@4"
         }
       ]
     },
@@ -113,8 +143,38 @@
         "title": "Hide File Extension"
       },
       {
+        "command": "{{VIEW_ID}}.{{TOGGLE_SEARCH_ON}}",
+        "title": "Currently allows search, go to reference, etc. on this file. Click to disable",
+        "icon": "$(search)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_SEARCH_OFF}}",
+        "title": "Currently removed from search results and prevents go to reference and similar features.  Click to add to search",
+        "icon": "$(search-stop)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FAVORITE_ON}}",
+        "title": "Move out of favorites",
+        "icon": "$(heart-filled)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FAVORITE_OFF}}",
+        "title": "Move to favorites folder",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_LOCK_ON}}",
+        "title": "Locked. Prevents search/visibility setting changes. Click to unlock.",
+        "icon": "$(lock)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_LOCK_OFF}}",
+        "title": "Click to lock and prevent search/visibility setting changes",
+        "icon": "$(unlock)"
+      },
+      {
         "command": "{{VIEW_ID}}.{{REMOVE}}",
-        "title": "Remove",
+        "title": "Remove file from list",
         "icon": "$(trash)"
       },
       {

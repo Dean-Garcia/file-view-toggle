@@ -9,7 +9,8 @@ import {
 import { getFileExtension, hiddenFilesProvider } from "./utils/fileUtils";
 import { FileVisibilityActions } from "./constants";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
-import { FilePatternProps } from "./types";
+import { TreeFolderCategories } from "./types";
+import { TreeFolderItem } from "./TreeFolderItem";
 
 interface VsCodeFile {
   path: string;
@@ -37,7 +38,7 @@ export const hideFileExtension = async (
     .map((file) => {
       return `**/*.${getFileExtension(file.path)}`;
     });
-  await addFilesToExcluded(filesToExclude);
+  await addFilesToExcluded(filesToExclude, TreeFolderCategories.EXTENSIONS);
 
   refresh();
 };
@@ -70,6 +71,29 @@ export const refresh = (item?: HiddenFileTreeItem): void => {
 };
 
 export const toggleRowVisibility = async (
+  item: HiddenFileTreeItem | TreeFolderItem,
+  allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
+): Promise<void> => {
+  const filesToProcess = allSelectedItems || [item];
+  const isMultiSelect = filesToProcess.length !== 1;
+  const fileObject = { ...getFileVisibilityFileConfigs() };
+
+  for (const item of filesToProcess) {
+    if (item instanceof TreeFolderItem) {
+      if (isMultiSelect) continue;
+      else {
+        console.log("toggle all files in folder");
+      }
+    }
+    if (!fileObject[item.label]?.isLocked) {
+      fileObject[item.label].isHidden = !fileObject[item.label].isHidden;
+    }
+  }
+  await saveExcludeFiles(fileObject);
+  refresh();
+};
+
+export const toggleFavoriteStatus = async (
   item: HiddenFileTreeItem,
   allSelectedItems: HiddenFileTreeItem[],
 ): Promise<void> => {
@@ -77,7 +101,38 @@ export const toggleRowVisibility = async (
   const fileObject = { ...getFileVisibilityFileConfigs() };
 
   for (const item of filesToProcess) {
-    fileObject[item.label].isHidden = !fileObject[item.label]?.isHidden;
+    fileObject[item.label].isFavorite = !fileObject[item.label].isFavorite;
+  }
+  await saveExcludeFiles(fileObject);
+  refresh();
+};
+
+export const toggleLockStatus = async (
+  item: HiddenFileTreeItem,
+  allSelectedItems: HiddenFileTreeItem[],
+): Promise<void> => {
+  const filesToProcess = allSelectedItems || [item];
+  const fileObject = { ...getFileVisibilityFileConfigs() };
+
+  for (const item of filesToProcess) {
+    fileObject[item.label].isLocked = !fileObject[item.label]?.isLocked;
+  }
+  await saveExcludeFiles(fileObject);
+  refresh();
+};
+
+export const toggleSearchStatus = async (
+  item: HiddenFileTreeItem,
+  allSelectedItems: HiddenFileTreeItem[],
+): Promise<void> => {
+  const filesToProcess = allSelectedItems || [item];
+  const fileObject = { ...getFileVisibilityFileConfigs() };
+
+  for (const item of filesToProcess) {
+    if (!fileObject[item.label].isLocked) {
+      fileObject[item.label].isNotSearchable =
+        !fileObject[item.label]?.isNotSearchable;
+    }
   }
   await saveExcludeFiles(fileObject);
   refresh();
@@ -89,6 +144,12 @@ export const registerCommands = (context: ExtensionContext) => {
     [FileVisibilityActions.TOGGLE_SELECTED, toggleRowVisibility],
     [FileVisibilityActions.HIDE_FILE_EXTENSION, hideFileExtension],
     [FileVisibilityActions.TOGGLE_ROW_VISIBILITY, toggleRowVisibility],
+    [FileVisibilityActions.TOGGLE_FAVORITE_ON, toggleFavoriteStatus],
+    [FileVisibilityActions.TOGGLE_FAVORITE_OFF, toggleFavoriteStatus],
+    [FileVisibilityActions.TOGGLE_LOCK_ON, toggleLockStatus],
+    [FileVisibilityActions.TOGGLE_LOCK_OFF, toggleLockStatus],
+    [FileVisibilityActions.TOGGLE_SEARCH_ON, toggleSearchStatus],
+    [FileVisibilityActions.TOGGLE_SEARCH_OFF, toggleSearchStatus],
     [FileVisibilityActions.REMOVE, removeFiles],
     [FileVisibilityActions.SHOW_ALL, showAll],
     [FileVisibilityActions.HIDE_ALL, hideAll],

@@ -137,7 +137,10 @@ export const removeFilesFromExcludeList = async (
 };
 
 // Add files to exclude list
-export const addFilesToExcluded = async (paths: Array<string>) => {
+export const addFilesToExcluded = async (
+  paths: Array<string>,
+  category?: TreeFolderCategories,
+) => {
   // get existing
   const files = { ...getFileVisibilityFileConfigs() };
 
@@ -151,7 +154,7 @@ export const addFilesToExcluded = async (paths: Array<string>) => {
         .replace(rootFolder, "");
 
       if (!Object.hasOwn(files, path)) {
-        const props = getDefaultConfigs(cleanFileOrDirPath);
+        const props = getDefaultConfigs(cleanFileOrDirPath, category);
         files[cleanFileOrDirPath] = props;
       }
     }
@@ -161,15 +164,17 @@ export const addFilesToExcluded = async (paths: Array<string>) => {
 
 export const toggleAllFilesVisibility = async (hideOrShow: "hide" | "show") => {
   const files = { ...getFileVisibilityFileConfigs() };
-  const toggledFiles: Record<string, FilePatternProps> = {};
+  // const toggledFiles: Record<string, FilePatternProps> = {};
 
   const wantToHide = hideOrShow === "hide";
 
   Object.entries(files).forEach(([file, props]) => {
-    toggledFiles[file] = { ...props, isHidden: wantToHide };
+    if (!props.isLocked) {
+      files[file].isHidden = wantToHide;
+    }
   });
 
-  await saveExcludeFiles(toggledFiles);
+  await saveExcludeFiles(files);
 };
 
 // Get files from file-visibility.files
@@ -201,14 +206,18 @@ export const getFileVisibilityPatterns = (
   return fileVisibilityPatterns;
 };
 
-export const getDefaultConfigs = (path: string) => {
+export const getDefaultConfigs = (
+  path: string,
+  category = TreeFolderCategories.FILES,
+) => {
   const shortPathString = shortenFilePath(path, 2);
 
   return {
     shortenedPath: shortPathString,
-    treeViewFolder: TreeFolderCategories.FILES,
+    treeViewFolder: category,
     isHidden: true,
     isNotSearchable: false,
     isLocked: false,
+    isFavorite: false,
   };
 };
