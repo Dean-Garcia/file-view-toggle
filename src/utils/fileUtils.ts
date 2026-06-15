@@ -14,7 +14,6 @@ import {
   saveDefaultExclude,
   saveExcludeFiles,
 } from "./configUtils";
-
 import * as config from "../../config.json";
 
 export let hiddenFilesProvider: HiddenFilesProvider;
@@ -78,6 +77,10 @@ export const getFileExtension = (filePath: string) => {
   return filePath.slice(
     (Math.max(0, filePath.lastIndexOf(".")) || Infinity) + 1,
   );
+};
+
+export const getFileName = (filePath: string) => {
+  return filePath.split(/[/\\]/).pop() || "";
 };
 
 export const shortenFilePath = (filePath: string, elements: number) => {

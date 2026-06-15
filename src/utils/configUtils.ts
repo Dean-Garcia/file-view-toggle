@@ -1,14 +1,17 @@
 import { WorkspaceConfiguration, workspace } from "vscode";
 import { rootFolder, shortenFilePath } from "./fileUtils";
 import {
-  HiddenFilePatternConfigs,
-  FilePatternProps,
+  ExtSettingConfigs,
+  FileConfigs,
   PatternRules,
   TreeFolderCategories,
+  FilePatternKeys,
 } from "../types";
 import * as vscode from "vscode";
 import * as config from "../../config.json";
 import { HiddenFileTreeItem } from "../HiddenFileTreeItem";
+import { TreeFolderItem } from "../TreeFolderItem";
+import { refresh } from "../commands";
 
 const defaultExclude: Record<string, boolean> = {};
 
@@ -81,9 +84,7 @@ export const getFileVisibilityConfig = (): WorkspaceConfiguration => {
 /**
  *
  */
-export const updateFilesView = async (
-  files: Record<string, FilePatternProps>,
-) => {
+export const updateFilesView = async (files: Record<string, FileConfigs>) => {
   // Create new object and add defaultExclude
   const fileExcludeObj: PatternRules = {};
   Object.entries(files).map(([path, props]) => {
@@ -112,9 +113,7 @@ export const updateFilesView = async (
 };
 
 // Update files-visilibity with files
-export const saveExcludeFiles = async (
-  files: Record<string, FilePatternProps>,
-) => {
+export const saveExcludeFiles = async (files: Record<string, FileConfigs>) => {
   await getFileVisibilityConfig().update(
     "files",
     files,
@@ -164,7 +163,7 @@ export const addFilesToExcluded = async (
 
 export const toggleAllFilesVisibility = async (hideOrShow: "hide" | "show") => {
   const files = { ...getFileVisibilityFileConfigs() };
-  // const toggledFiles: Record<string, FilePatternProps> = {};
+  // const toggledFiles: Record<string, FileConfigs> = {};
 
   const wantToHide = hideOrShow === "hide";
 
@@ -175,15 +174,52 @@ export const toggleAllFilesVisibility = async (hideOrShow: "hide" | "show") => {
   });
 
   await saveExcludeFiles(files);
+  refresh();
+};
+
+export const togglePropertyForFiles = async (
+  item: HiddenFileTreeItem | TreeFolderItem,
+  allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
+  property: FilePatternKeys,
+) => {
+  const filesToProcess = allSelectedItems || [item];
+  const fileObject = { ...getFileVisibilityFileConfigs() };
+
+  for (const item of filesToProcess) {
+    if (
+      !(item instanceof TreeFolderItem) &&
+      fileObject[item.label][property] !== undefined
+    ) {
+      fileObject[item.label][property] = !fileObject[item.label][property];
+    }
+  }
+  await saveExcludeFiles(fileObject);
+  refresh();
+};
+
+export const toggleFolderProperty = async (
+  item: TreeFolderItem,
+  property: FilePatternKeys,
+  desiredValue: boolean,
+) => {
+  const files = { ...getFileVisibilityFileConfigs() };
+  const category = item.id;
+  Object.entries(files).forEach(([file, props]) => {
+    if (props.isFavorite && category === TreeFolderCategories.FAVORITES) {
+      files[file][property] = desiredValue;
+    } else if (!props.isFavorite && props.treeViewFolder === category) {
+      files[file][property] = desiredValue;
+    }
+  });
+
+  await saveExcludeFiles(files);
+  refresh();
 };
 
 // Get files from file-visibility.files
-export const getFileVisibilityFileConfigs = (): HiddenFilePatternConfigs => {
-  const files = getFileVisibilityConfig().get<HiddenFilePatternConfigs>(
-    "files",
-    {},
-  );
-  const sanitizedFileConfigs: HiddenFilePatternConfigs = {};
+export const getFileVisibilityFileConfigs = (): ExtSettingConfigs => {
+  const files = getFileVisibilityConfig().get<ExtSettingConfigs>("files", {});
+  const sanitizedFileConfigs: ExtSettingConfigs = {};
 
   // Need to sanitize props object to be able to read from it
   // Returns a Proxy (object) otherwise, leading to errors when reading things like files[path].isHidden
@@ -194,7 +230,7 @@ export const getFileVisibilityFileConfigs = (): HiddenFilePatternConfigs => {
 };
 
 export const getFileVisibilityPatterns = (
-  property: keyof FilePatternProps,
+  property: keyof FileConfigs,
 ): Record<string, boolean | string> => {
   const files = { ...getFileVisibilityFileConfigs() };
   const fileVisibilityPatterns: Record<string, boolean | string> = {};

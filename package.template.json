@@ -70,6 +70,9 @@
           "command": "{{VIEW_ID}}.{{HIDE}}"
         },
         {
+          "command": "{{VIEW_ID}}.{{HIDE_FILE_NAME}}"
+        },
+        {
           "command": "{{VIEW_ID}}.{{HIDE_FILE_EXTENSION}}"
         }
       ],
@@ -130,13 +133,47 @@
           "command": "{{VIEW_ID}}.{{REMOVE}}",
           "when": "view == {{EXT_ID}} && viewItem =~ /viewableItem-/",
           "group": "inline@4"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_SEARCH_ON}}",
+          "when": "view == {{EXT_ID}} && viewItem == folderNode",
+          "group": "1_modification@1"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_SEARCH_OFF}}",
+          "when": "view == {{EXT_ID}} && viewItem == folderNode",
+          "group": "1_modification@2"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_HIDE}}",
+          "when": "view == {{EXT_ID}} && viewItem == folderNode",
+          "group": "1_modification@3"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_SHOW}}",
+          "when": "view == {{EXT_ID}} && viewItem == folderNode",
+          "group": "1_modification@4"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_LOCK}}",
+          "when": "view == {{EXT_ID}} && viewItem == folderNode",
+          "group": "1_modification@5"
+        },
+        {
+          "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_UNLOCK}}",
+          "when": "view == {{EXT_ID}} && viewItem == folderNode",
+          "group": "1_modification@6"
         }
       ]
     },
     "commands": [
       {
         "command": "{{VIEW_ID}}.{{HIDE}}",
-        "title": "Hide"
+        "title": "Hide File"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{HIDE_FILE_NAME}}",
+        "title": "Hide Files Sharing Name"
       },
       {
         "command": "{{VIEW_ID}}.{{HIDE_FILE_EXTENSION}}",
@@ -201,6 +238,30 @@
         "command": "{{VIEW_ID}}.{{REFRESH}}",
         "title": "Refresh View",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_SEARCH_ON}}",
+        "title": "Search on"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_SEARCH_OFF}}",
+        "title": "Search off"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_HIDE}}",
+        "title": "HIDE"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_SHOW}}",
+        "title": "SHOW"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_LOCK}}",
+        "title": "LOCK"
+      },
+      {
+        "command": "{{VIEW_ID}}.{{TOGGLE_FOLDER_UNLOCK}}",
+        "title": "UNLOCK"
       }
     ]
   },

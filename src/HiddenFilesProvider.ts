@@ -32,7 +32,11 @@ export class HiddenFilesProvider implements TreeDataProvider<
           "Designated Favorite Files",
         ),
         new TreeFolderItem("Files", "files", "Hidden Files"),
-        new TreeFolderItem("Extensions", "extensions", "Hidden Extensions"),
+        new TreeFolderItem(
+          "Extensions / Names",
+          "extensions",
+          "Hidden Extensions and Files with a Specific Name",
+        ),
         new TreeFolderItem(
           "Default",
           "default",

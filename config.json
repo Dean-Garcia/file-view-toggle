@@ -4,6 +4,7 @@
 
   "HIDE": "hide",
   "HIDE_FILE_EXTENSION": "hide-file-extension",
+  "HIDE_FILE_NAME": "hide-file-name",
 
   "HIDE_ALL": "hide-all",
   "SHOW_ALL": "show-all",
@@ -21,8 +22,8 @@
 
   "TOGGLE_FOLDER_LOCK": "toggle-folder-lock-on",
   "TOGGLE_FOLDER_UNLOCK": "toggle-folder-lock-off",
-  "TOGGLE_FOLDER_HIDE": "toggle-folder-lock-on",
-  "TOGGLE_FOLDER_SHOW": "toggle-folder-lock-on",
-  "TOGGLE_FOLDER_SEARCH_ON": "toggle-folder-lock-on",
-  "TOGGLE_FOLDER_SEARCH_OFF": "toggle-folder-lock-on"
+  "TOGGLE_FOLDER_HIDE": "toggle-folder-hide",
+  "TOGGLE_FOLDER_SHOW": "toggle-folder-show",
+  "TOGGLE_FOLDER_SEARCH_ON": "toggle-folder-search-on",
+  "TOGGLE_FOLDER_SEARCH_OFF": "toggle-folder-search-off"
 }

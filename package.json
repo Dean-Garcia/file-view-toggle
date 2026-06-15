@@ -70,6 +70,9 @@
           "command": "file-visibility.hide"
         },
         {
+          "command": "file-visibility.hide-file-name"
+        },
+        {
           "command": "file-visibility.hide-file-extension"
         }
       ],
@@ -130,13 +133,47 @@
           "command": "file-visibility.remove",
           "when": "view == file-view-toggle && viewItem =~ /viewableItem-/",
           "group": "inline@4"
+        },
+        {
+          "command": "file-visibility.toggle-folder-search-on",
+          "when": "view == file-view-toggle && viewItem == folderNode",
+          "group": "1_modification@1"
+        },
+        {
+          "command": "file-visibility.toggle-folder-search-off",
+          "when": "view == file-view-toggle && viewItem == folderNode",
+          "group": "1_modification@2"
+        },
+        {
+          "command": "file-visibility.toggle-folder-hide",
+          "when": "view == file-view-toggle && viewItem == folderNode",
+          "group": "1_modification@3"
+        },
+        {
+          "command": "file-visibility.toggle-folder-show",
+          "when": "view == file-view-toggle && viewItem == folderNode",
+          "group": "1_modification@4"
+        },
+        {
+          "command": "file-visibility.toggle-folder-lock-on",
+          "when": "view == file-view-toggle && viewItem == folderNode",
+          "group": "1_modification@5"
+        },
+        {
+          "command": "file-visibility.toggle-folder-lock-off",
+          "when": "view == file-view-toggle && viewItem == folderNode",
+          "group": "1_modification@6"
         }
       ]
     },
     "commands": [
       {
         "command": "file-visibility.hide",
-        "title": "Hide"
+        "title": "Hide File"
+      },
+      {
+        "command": "file-visibility.hide-file-name",
+        "title": "Hide Files Sharing Name"
       },
       {
         "command": "file-visibility.hide-file-extension",
@@ -201,6 +238,30 @@
         "command": "file-visibility.refresh",
         "title": "Refresh View",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "file-visibility.toggle-folder-search-on",
+        "title": "Search on"
+      },
+      {
+        "command": "file-visibility.toggle-folder-search-off",
+        "title": "Search off"
+      },
+      {
+        "command": "file-visibility.toggle-folder-hide",
+        "title": "HIDE"
+      },
+      {
+        "command": "file-visibility.toggle-folder-show",
+        "title": "SHOW"
+      },
+      {
+        "command": "file-visibility.toggle-folder-lock-on",
+        "title": "LOCK"
+      },
+      {
+        "command": "file-visibility.toggle-folder-lock-off",
+        "title": "UNLOCK"
       }
     ]
   },
