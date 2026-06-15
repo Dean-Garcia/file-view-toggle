@@ -1,13 +1,7 @@
-import {
-  workspace,
-  window,
-  OutputChannel,
-  ExtensionContext,
-  RelativePattern,
-} from "vscode";
+import { workspace, ExtensionContext } from "vscode";
 import * as vscode from "vscode";
 import * as fs from "fs";
-import { HiddenFilesProvider } from "../HiddenFilesProvider";
+import { HiddenFilesProvider } from "../classes/HiddenFilesProvider";
 import { refresh, registerCommands } from "../commands";
 import {
   getFileVisibilityFileConfigs,
@@ -19,20 +13,29 @@ import * as config from "../../config.json";
 export let hiddenFilesProvider: HiddenFilesProvider;
 export const rootFolder = workspace.workspaceFolders?.[0].uri.path as string;
 
-export const exists = (path: string) => {
-  return fs.existsSync(path);
-};
-export const isDirectory = (path: string) => {
-  return fs.statSync(path).isDirectory();
-};
+// export const exists = (path: string) => {
+//   return fs.existsSync(path);
+// };
+// export const isDirectory = (path: string) => {
+//   return fs.statSync(path).isDirectory();
+// };
+
+// export const resetSettings = (fullReset = true) => {
+//   saveDefaultExclude(fullReset);
+
+//   const excludedFiles = getFileVisibilityFileConfigs();
+//   if (Object.keys(excludedFiles).length === 0) {
+//     saveExcludeFiles({});
+//   }
+// };
 
 export const resetSettings = (fullReset = true) => {
   saveDefaultExclude(fullReset);
 
-  const excludedFiles = getFileVisibilityFileConfigs();
-  if (Object.keys(excludedFiles).length === 0) {
-    saveExcludeFiles({});
-  }
+  // const excludedFiles = getFileVisibilityFileConfigs();
+  // if (Object.keys(excludedFiles).length === 0) {
+  //   saveExcludeFiles({});
+  // }
 };
 
 export const init = (context: ExtensionContext) => {

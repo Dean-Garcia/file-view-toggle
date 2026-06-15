@@ -6,12 +6,10 @@ import {
   Command,
   TreeItemCollapsibleState,
 } from "vscode";
-import { getFileVisibilityFileConfigs } from "./utils/configUtils";
-import { FileVisibilityActions } from "./constants";
+import { getFileVisibilityFileConfigs } from "./../utils/configUtils";
 import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
 import { TreeFolderItem } from "./TreeFolderItem";
-import * as vscode from "vscode";
-import { TreeFolderCategories } from "./types";
+import { TreeFolderCategories } from "./../types";
 
 export class HiddenFilesProvider implements TreeDataProvider<
   TreeFolderItem | TreeItem

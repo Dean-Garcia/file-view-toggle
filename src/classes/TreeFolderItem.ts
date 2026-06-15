@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TreeFolderCategories } from "./types";
+import { TreeFolderCategories } from "../types";
 
 // To change icons for folder
 const getIconForFolder = (label: TreeFolderCategories) => {

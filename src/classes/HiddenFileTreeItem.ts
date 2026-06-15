@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as config from "../config.json";
+import * as config from "../../config.json";
 
 export class HiddenFileTreeItem extends vscode.TreeItem {
   constructor(

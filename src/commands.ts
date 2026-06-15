@@ -1,9 +1,7 @@
 import { ExtensionContext, commands } from "vscode";
 import {
   addFilesToExcluded,
-  getFileVisibilityFileConfigs,
   removeFilesFromExcludeList,
-  saveExcludeFiles,
   toggleAllFilesVisibility,
   toggleFolderProperty,
   togglePropertyForFiles,
@@ -13,10 +11,12 @@ import {
   getFileName,
   hiddenFilesProvider,
 } from "./utils/fileUtils";
-import { FileVisibilityActions } from "./constants";
-import { HiddenFileTreeItem } from "./HiddenFileTreeItem";
-import { TreeFolderCategories, FileConfigs, FilePatternKeys } from "./types";
-import { TreeFolderItem } from "./TreeFolderItem";
+import { HiddenFileTreeItem } from "./classes/HiddenFileTreeItem";
+import {
+  TreeFolderCategories,
+  FilePatternKeys,
+  FileVisibilityActions,
+} from "./types";
 
 interface VsCodeFile {
   path: string;
@@ -64,20 +64,12 @@ export const hideFileExtension = async (
   refresh();
 };
 
-export const removeFiles = async (
-  item: HiddenFileTreeItem,
-  allSelectedItems: HiddenFileTreeItem[],
-): Promise<void> => {
-  const filesToProcess = allSelectedItems || [item];
-  await removeFilesFromExcludeList(filesToProcess);
-  refresh();
-};
-
-// export const showAll = async (item: HiddenFileTreeItem): Promise<void> => {
-//   await toggleAllFilesVisibility("show");
-// };
-// export const hideAll = async (item: HiddenFileTreeItem): Promise<void> => {
-//   await toggleAllFilesVisibility("hide");
+// export const removeFiles = async (
+//   item: HiddenFileTreeItem,
+//   allSelectedItems: HiddenFileTreeItem[],
+// ): Promise<void> => {
+//   const filesToProcess = allSelectedItems || [item];
+//   await removeFilesFromExcludeList(filesToProcess);
 //   refresh();
 // };
 
@@ -90,56 +82,11 @@ export const refresh = (item?: HiddenFileTreeItem): void => {
   }
 };
 
-// export const toggleRowVisibility = async (
-//   item: HiddenFileTreeItem | TreeFolderItem,
-//   allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
-// ): Promise<void> => {
-//   const fileObject = togglePropertyForFiles(item, allSelectedItems, "isHidden");
-//   await saveExcludeFiles(fileObject);
-//   refresh();
-// };
-
-// export const toggleFavoriteStatus = async (
-//   item: HiddenFileTreeItem | TreeFolderItem,
-//   allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
-// ): Promise<void> => {
-//   const fileObject = togglePropertyForFiles(
-//     item,
-//     allSelectedItems,
-//     "isFavorite",
-//   );
-//   await saveExcludeFiles(fileObject);
-//   refresh();
-// };
-
-// export const toggleLockStatus = async (
-//   item: HiddenFileTreeItem | TreeFolderItem,
-//   allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
-// ): Promise<void> => {
-//   const fileObject = togglePropertyForFiles(item, allSelectedItems, "isLocked");
-//   await saveExcludeFiles(fileObject);
-//   refresh();
-// };
-
-// export const toggleSearchStatus = async (
-//   item: HiddenFileTreeItem | TreeFolderItem,
-//   allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
-// ): Promise<void> => {
-//   const fileObject = togglePropertyForFiles(
-//     item,
-//     allSelectedItems,
-//     "isNotSearchable",
-//   );
-//   await saveExcludeFiles(fileObject);
-//   refresh();
-// };
-
 export const registerCommands = (context: ExtensionContext) => {
   const hideFilesCommands: Array<[string, (...args: any[]) => any]> = [
     [FileVisibilityActions.HIDE, hide],
     [FileVisibilityActions.HIDE_FILE_EXTENSION, hideFileExtension],
     [FileVisibilityActions.HIDE_FILE_NAME, hideFilesWithName],
-
     [
       FileVisibilityActions.TOGGLE_SELECTED,
       (item, allSelectedItems) =>
@@ -238,7 +185,11 @@ export const registerCommands = (context: ExtensionContext) => {
       (item) =>
         toggleFolderProperty(item, FilePatternKeys.isNotSearchable, false),
     ],
-    [FileVisibilityActions.REMOVE, removeFiles],
+    [
+      FileVisibilityActions.REMOVE,
+      (item, allSelectedItems) =>
+        removeFilesFromExcludeList(item, allSelectedItems),
+    ],
     [FileVisibilityActions.SHOW_ALL, () => toggleAllFilesVisibility("show")],
     [FileVisibilityActions.HIDE_ALL, () => toggleAllFilesVisibility("hide")],
     [FileVisibilityActions.REFRESH, refresh],

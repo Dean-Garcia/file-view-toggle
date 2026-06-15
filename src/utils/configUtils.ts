@@ -9,8 +9,8 @@ import {
 } from "../types";
 import * as vscode from "vscode";
 import * as config from "../../config.json";
-import { HiddenFileTreeItem } from "../HiddenFileTreeItem";
-import { TreeFolderItem } from "../TreeFolderItem";
+import { HiddenFileTreeItem } from "../classes/HiddenFileTreeItem";
+import { TreeFolderItem } from "../classes/TreeFolderItem";
 import { refresh } from "../commands";
 
 const defaultExclude: Record<string, boolean> = {};
@@ -35,34 +35,78 @@ export const workspaceSearchConfiguration = (): WorkspaceConfiguration => {
   );
 };
 
+// /**
+//  *
+//  * @param calculateDefaultExclude
+//  */
+// export const saveDefaultExclude = async (calculateDefaultExclude = true) => {
+//   if (calculateDefaultExclude) {
+//     // Get files.exclude array [filePath, boolean]
+//     const exclude = workspaceFilesConfiguration().get("exclude") as Record<
+//       string,
+//       boolean
+//     >;
+
+//     // Get file-visibility.files
+//     const excluded = { ...getFileVisibilityFileConfigs() };
+
+//     // If file-visibility.files includes filePath from files.excluded, then add to defaultExclude
+//     for (const filePath in exclude) {
+//       if (!Object.hasOwn(excluded, filePath)) {
+//         defaultExclude[filePath] = true;
+//       }
+//     }
+
+//     // Update files.exclude with files.exclude.... ????
+//     await workspaceFilesConfiguration().update(
+//       "exclude",
+//       exclude,
+//       vscode.ConfigurationTarget.Workspace,
+//     );
+//   } else {
+//     // Update files.exclude with defaultExclude
+//     await workspaceFilesConfiguration().update(
+//       "exclude",
+//       defaultExclude,
+//       vscode.ConfigurationTarget.Workspace,
+//     );
+//   }
+// };
+
 /**
  *
  * @param calculateDefaultExclude
  */
-export const saveDefaultExclude = async (calculateDefaultExclude = true) => {
-  if (calculateDefaultExclude) {
+export const saveDefaultExclude = async (saveNewDefaultExclude = true) => {
+  if (saveNewDefaultExclude) {
     // Get files.exclude array [filePath, boolean]
-    const exclude = workspaceFilesConfiguration().get("exclude") as Record<
+    const filesExclude = workspaceFilesConfiguration().get("exclude") as Record<
       string,
       boolean
     >;
 
     // Get file-visibility.files
-    const excluded = { ...getFileVisibilityFileConfigs() };
+    const extensionSettings = { ...getFileVisibilityFileConfigs() };
 
-    // If file-visibility.files includes filePath from files.excluded, then add to defaultExclude
-    for (const filePath in exclude) {
-      if (!Object.hasOwn(excluded, filePath)) {
-        defaultExclude[filePath] = true;
+    // If file-visibility.files includes filePath from files.exclude, then add to defaultExclude
+    for (const filePath in filesExclude) {
+      // If it doesn't currently exist in extensionSettings, then add to defaultExclude
+      if (!Object.hasOwn(extensionSettings, filePath)) {
+        defaultExclude[filePath] = filesExclude[filePath];
+      }
+
+      // If it is in extensionSettings but under the default category, add to defaultExclude
+      if (Object.hasOwn(extensionSettings, filePath)) {
+        if (
+          extensionSettings[filePath].treeViewFolder ===
+          TreeFolderCategories.DEFAULT
+        ) {
+          defaultExclude[filePath] = filesExclude[filePath];
+        }
       }
     }
 
-    // Update files.exclude with files.exclude.... ????
-    await workspaceFilesConfiguration().update(
-      "exclude",
-      exclude,
-      vscode.ConfigurationTarget.Workspace,
-    );
+    addDefaultFilesToSettings(defaultExclude);
   } else {
     // Update files.exclude with defaultExclude
     await workspaceFilesConfiguration().update(
@@ -71,6 +115,36 @@ export const saveDefaultExclude = async (calculateDefaultExclude = true) => {
       vscode.ConfigurationTarget.Workspace,
     );
   }
+};
+
+const addDefaultFilesToSettings = async (
+  defaultExclude: Record<string, boolean>,
+) => {
+  let files = Object.entries(defaultExclude);
+  const settings = { ...getFileVisibilityFileConfigs() };
+  const isLocked = true;
+  const isNotSearchable = true;
+  for (const [file, isHidden] of files) {
+    if (!Object.hasOwn(settings, file)) {
+      const props = getDefaultConfigs(
+        file,
+        TreeFolderCategories.DEFAULT,
+        isHidden,
+        isNotSearchable,
+        isLocked,
+      );
+      settings[file] = props;
+    }
+  }
+  await saveExcludeFiles(settings);
+};
+
+export const restoreDefaultExclude = async () => {
+  await workspaceFilesConfiguration().update(
+    "exclude",
+    defaultExclude,
+    vscode.ConfigurationTarget.Workspace,
+  );
 };
 
 /**
@@ -124,15 +198,29 @@ export const saveExcludeFiles = async (files: Record<string, FileConfigs>) => {
 
 // Removes file from files-visibility.files list
 export const removeFilesFromExcludeList = async (
-  items: HiddenFileTreeItem[],
+  item: HiddenFileTreeItem | TreeFolderItem,
+  allSelectedItems: Array<HiddenFileTreeItem | TreeFolderItem>,
 ) => {
+  const items = allSelectedItems || [item];
+
   // Get files-visibility files. Need to spread otherwise will error.
   const files = { ...getFileVisibilityFileConfigs() };
   for (const item of items) {
-    delete files[item.label];
+    if (!(item instanceof TreeFolderItem)) {
+      if (!item.isLocked) {
+        if (files[item.label].treeViewFolder === TreeFolderCategories.DEFAULT) {
+          vscode.window.showErrorMessage(
+            "Default Items cannot be deleted.  Adjust settings.json manually to do so.",
+          );
+          continue;
+        }
+        delete files[item.label];
+      }
+    }
   }
 
   await saveExcludeFiles(files);
+  refresh();
 };
 
 // Add files to exclude list
@@ -183,6 +271,11 @@ export const togglePropertyForFiles = async (
   property: FilePatternKeys,
 ) => {
   const filesToProcess = allSelectedItems || [item];
+  if (item === undefined && allSelectedItems === undefined) {
+    vscode.window.showErrorMessage("No Items Selected.");
+    return;
+  }
+
   const fileObject = { ...getFileVisibilityFileConfigs() };
 
   for (const item of filesToProcess) {
@@ -229,31 +322,35 @@ export const getFileVisibilityFileConfigs = (): ExtSettingConfigs => {
   return sanitizedFileConfigs;
 };
 
-export const getFileVisibilityPatterns = (
-  property: keyof FileConfigs,
-): Record<string, boolean | string> => {
-  const files = { ...getFileVisibilityFileConfigs() };
-  const fileVisibilityPatterns: Record<string, boolean | string> = {};
+// export const getFileVisibilityPatterns = (
+//   property: keyof FileConfigs,
+// ): Record<string, boolean | string> => {
+//   const files = { ...getFileVisibilityFileConfigs() };
+//   const fileVisibilityPatterns: Record<string, boolean | string> = {};
 
-  Object.entries(files).forEach(([file, props]) => {
-    fileVisibilityPatterns[file] = props[property];
-  });
+//   Object.entries(files).forEach(([file, props]) => {
+//     fileVisibilityPatterns[file] = props[property];
+//   });
 
-  return fileVisibilityPatterns;
-};
+//   return fileVisibilityPatterns;
+// };
 
 export const getDefaultConfigs = (
   path: string,
   category = TreeFolderCategories.FILES,
+  isHidden = true,
+  isNotSearchable = false,
+  isLocked = false,
+  isFavorite = false,
 ) => {
   const shortPathString = shortenFilePath(path, 2);
 
   return {
     shortenedPath: shortPathString,
     treeViewFolder: category,
-    isHidden: true,
-    isNotSearchable: false,
-    isLocked: false,
-    isFavorite: false,
+    isHidden: isHidden,
+    isNotSearchable: isNotSearchable,
+    isLocked: isLocked,
+    isFavorite: isFavorite,
   };
 };
